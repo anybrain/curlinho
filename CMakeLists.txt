@@ -1,32 +1,34 @@
 cmake_minimum_required(VERSION 3.1)
-
 project(curlinho VERSION 0.0.1 LANGUAGES CXX)
-
 set(CMAKE_CXX_STANDARD 11)
 
-## Enable warnings.
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -pedantic -Wshadow -Wno-variadic-macros")
-endif ()
+###### Options you can change! ##################
+## Atention: Only build one type of lib (static OR dynamic)
+option(BUILD_SHARED_LIB "BUILD_SHARED" OFF)
+option(BUILD_STATIC_LIB "BUILD_STATIC" ON)
+option(BUILD_EXAMPLES "Build Examples" ON)
+option(BUILD_TESTS "Build Tests" OFF)
+#################################################
 
+############ Curlinho variables #################
+## use them in your project cmakelists
+## see examples cmakelist
 set(CURLINHO_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/include
     CACHE INTERNAL "curlinho include dirs" FORCE)
 
 set(CURLINHO_LIBRARIES curlinho)
+##################################################
 
-## Options you can change.
-## Atention: Only build one type of lib (static OR dynamic)
-option(BUILD_EXAMPLES "Build Examples" ON)
-option(BUILD_TESTS "Build Tests" ON)
-option(BUILD_SHARED_LIB "BUILD_SHARED" OFF)
-option(BUILD_STATIC_LIB "BUILD_STATIC" ON)
-
-include_directories(${DEEEP_INCLUDE_DIRS})
+## Enable warnings.
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -pedantic -Wshadow -Wno-variadic-macros")
+endif ()
 
 ## Find source files for each platform.
-file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
+file(GLOB_RECURSE SOURCE_FILES src/*.cpp include/*.h)
+include_directories(${CURLINHO_INCLUDE_DIRS})
 
 ## Build STATIC or SHARED library.
 if (BUILD_SHARED_LIB)
@@ -77,10 +79,19 @@ install(
         DESTINATION "include"
         FILES_MATCHING PATTERN "*.h"
 )
-
 install(
         TARGETS ${CURLINHO_LIBRARIES}
         LIBRARY DESTINATION "${LIBDIR}"
         ARCHIVE DESTINATION "${LIBDIR}"
         RUNTIME DESTINATION "bin"
 )
+
+####### BUILD TESTS ##########
+if(BUILD_TESTS)
+    add_subdirectory(test)
+endif(BUILD_TESTS)
+
+####### BUILD EXAMPLES #######
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif(BUILD_EXAMPLES)
