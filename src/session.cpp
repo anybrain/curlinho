@@ -188,17 +188,15 @@ Response Session::makeRequestRetries(CURL *curl) {
   auto r = makeRequest(curl);
   for (auto timer : retryPolicy_.delays_) {
     if (r.status_code != 200 || r.error.code == ErrorCode::OPERATION_TIMEDOUT) {
-      if (timer == retryPolicy_.delays_.back()) {
-        // Max timeouts reached!
-        break;
-      } else if (r.error.code == ErrorCode::OPERATION_TIMEDOUT) {
-        // Request timed out, Another retry!
+      if (r.error.code == ErrorCode::OPERATION_TIMEDOUT) {
+        CRL_LOG << "Request timed out, Another retry!" << std::endl;
         CRL_SLEEP(timer);
       } else if (std::find(retryPolicy_.recoverableCodes_.begin(), retryPolicy_.recoverableCodes_.end(),
                            r.status_code) == retryPolicy_.recoverableCodes_.end()) {
-        // Error was not recoverable, no need to retry!
+        CRL_LOG << "Error was not recoverable, no need to retry! - " << r.status_code << std::endl;
         break;
       } else {
+        CRL_LOG << "Request failed, retry in " << timer << " seconds. - " << r.status_code << std::endl;
         CRL_SLEEP(timer);
       }
     } else {

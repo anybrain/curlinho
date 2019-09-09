@@ -5,6 +5,10 @@
 
 #define CRL_FWD(...) ::std::forward<decltype(__VA_ARGS__)>(__VA_ARGS__)
 
+/// change this define to use your logger!
+#define CRL_LOG std::cout
+#define CRL_LOG_ERROR std::cerr
+
 #if defined(__APPLE__)
     #include <unistd.h>
     #define CRL_SLEEP(x) sleep(x)

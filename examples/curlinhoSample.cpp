@@ -12,27 +12,31 @@ int main() {
 
   RetryPolicy retries;
   retries.nr_retries = 3;
-  retries.delays_= {4,4,2};
+  retries.delays_= {1,1,2};
   curlinho::SetDefaults(
-          Url{"https://www.google.pt/"},
+          Url{"https://httpstat.us/"},
           Headers{
               {"Content-type", "application/json"},
-              {"User-agent", "JJ"}
+              {"Accept", "application/json"}
               },
-          Timeout{100},
+          Timeout{30000},
           ProtocolVersion{curlinho::HTTP::v2},
           retries
       );
 
-  Response res = curlinho::Get("");
-
-  std::cout << res.status_code;
+  Response res = curlinho::Get("425");
+  auto j = nlohmann::json::parse(res.text);
+  std::cout << j.dump() << std::endl;
+  std::cout << j["description"] << std::endl;
+  for (auto item : res.headers) {
+    std::cout << item.first << " - " << item.second << std::endl;
+  }
 
   curlinho::PostDetach("", curlinho::Body{""});
 
   std::thread([]() {
-      Response res = Post("maps/", Body{""});
-      std::cout << res.status_code << std::endl << res.text << std::endl;
+      Response res = Post("200", Body{""});
+      std::cout << res.text << std::endl;
       for (auto item : res.headers) {
           std::cout << item.first << " - " << item.second << std::endl;
       }

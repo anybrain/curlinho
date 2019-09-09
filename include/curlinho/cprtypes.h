@@ -18,7 +18,7 @@ using ProtocolVersion = enum class HTTP { v1x, v2 };
 struct RetryPolicy {
   int nr_retries=0;
   std::vector<int> delays_{};
-  std::vector<int> recoverableCodes_{408, 500, 501, 502, 503, 504, 505, 100};
+  std::vector<int> recoverableCodes_{408, 425, 429, 500, 502, 503, 504, 522, 524, 100};
 };
 
 } // namespace curlinho

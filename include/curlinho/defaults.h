@@ -16,7 +16,6 @@ namespace curlinho {
 class Defaults {
 
 public:
-  Defaults(const Url &url);
   static Defaults &Instance() {
     static Defaults instance;
     return instance;

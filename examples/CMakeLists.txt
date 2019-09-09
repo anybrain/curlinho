@@ -1,8 +1,10 @@
-project(deeep-examples)
+project(curlinho-examples)
 
-message(STATUS "..Building examples       (-DBUILD_EXAMPLES=OFF to disable)")
-if (WIN32)
-    add_subdirectory(windows)
-elseif (APPLE)
-    add_subdirectory(mac)
-endif ()
+set(CMAKE_CXX_STANDARD 11)
+
+include_directories(${CURLINHO_INCLUDE_DIRS})
+message(${CURLINHO_INCLUDE_DIRS})
+
+file(GLOB_RECURSE SOURCE_FILES *.cpp)
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+target_link_libraries(${PROJECT_NAME} ${CURLINHO_LIBRARIES})
