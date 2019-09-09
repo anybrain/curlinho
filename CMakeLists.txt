@@ -18,7 +18,7 @@ set(CURLINHO_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/include
     CACHE INTERNAL "curlinho include dirs" FORCE)
 
-set(CURLINHO_LIBRARIES curlinho)
+set(CURLINHO_LIBRARIES curlinho CACHE INTERNAL "curlinho library" FORCE)
 ##################################################
 
 ## Enable warnings.
