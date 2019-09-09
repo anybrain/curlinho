@@ -17,11 +17,12 @@ Curlinho currently supports:
 * Timeout specification
 * Asynchronous requests
 * Callback interface
+* Custom Retry Policy
 * Fully Concurrent POST requests
 * OpenSSL
 * HTTP/2 Protocol
 
-## Usage
+## Integration
 
 If you need to integrate Curlinho with your project, the primary way is to use git submodules. Add this repository as a submodule of your root repository:
 
@@ -45,5 +46,3 @@ This will produce two important CMake variables, `CURLINHO_INCLUDE_DIRS` and `CU
 include_directories(${CURLINHO_INCLUDE_DIRS})
 target_link_libraries(your_target_name ${CURLINHO_LIBRARIES})
 ```
-
-
