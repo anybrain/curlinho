@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 ## Atention: Only build one type of lib (static OR dynamic)
 option(BUILD_SHARED_LIB "BUILD_SHARED" OFF)
 option(BUILD_STATIC_LIB "BUILD_STATIC" ON)
-option(BUILD_EXAMPLES "Build Examples" ON)
+option(BUILD_EXAMPLES "Build Examples" OFF)
 option(BUILD_TESTS "Build Tests" OFF)
 #################################################
 
@@ -88,7 +88,8 @@ install(
 
 ####### BUILD TESTS ##########
 if(BUILD_TESTS)
-    add_subdirectory(test)
+    #TODO: Add tests
+    #add_subdirectory(test)
 endif(BUILD_TESTS)
 
 ####### BUILD EXAMPLES #######
