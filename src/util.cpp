@@ -20,16 +20,6 @@ bool CaseInsensitiveCompare::operator()(const std::string& a, const std::string&
 long Timeout::Milliseconds() const {
     static_assert(std::is_same<std::chrono::milliseconds, decltype(ms)>::value,
                   "Following casting expects milliseconds.");
-
-    if (ms.count() > std::numeric_limits<long>::max()) {
-        throw std::overflow_error("cpr::Timeout: timeout value overflow: " +
-                                  std::to_string(ms.count()) + " ms.");
-    }
-    if (ms.count() < std::numeric_limits<long>::min()) {
-        throw std::underflow_error("cpr::Timeout: timeout value underflow: " +
-                                   std::to_string(ms.count()) + " ms.");
-    }
-
     return static_cast<long>(ms.count());
 }
 
@@ -56,7 +46,7 @@ Headers parseHeaders(const std::string& headers) {
             if (found != std::string::npos) {
                 auto value = line.substr(found + 1);
                 value.erase(0, value.find_first_not_of("\t "));
-                value.resize(std::min(value.size(), value.find_last_not_of("\t\n\r ") + 1));
+                value.resize((std::min)(value.size(), value.find_last_not_of("\t\n\r ") + 1));
                 header[line.substr(0, found)] = value;
             }
         }
