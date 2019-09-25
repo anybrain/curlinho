@@ -65,7 +65,6 @@ IF (MSVC)
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/nghttp2_static.lib
                 )
     endif()
-
 ENDIF()
 
 ## Library installation directory.

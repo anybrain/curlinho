@@ -151,7 +151,7 @@ void Session::SetProtocolVersion(
       if (curl_version_info(CURLVERSION_NOW)->features & CURL_VERSION_HTTP2) {
         curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
       } else {
-        throw std::runtime_error("no HTTP/2 support");
+        std::cerr << "No HTTP/2 support" << std::endl;
       }
     }
   }
