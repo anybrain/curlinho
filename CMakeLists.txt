@@ -36,13 +36,16 @@ include_directories(${CURLINHO_INCLUDE_DIRS})
 if (BUILD_SHARED_LIB)
     message(STATUS "..Building dynamically (-DBUILD_SHARED_LIB=OFF to disable)")
     add_library(${CURLINHO_LIBRARIES} SHARED ${SOURCE_FILES})
+    set(CURLINHO_BINARY_DIRS ${CURLINHO_BINARY_DIRS}
+            ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:${CURLINHO_LIBRARIES}>
+            CACHE INTERNAL "curlinho binary dirs" FORCE)
+    list(APPEND CURLINHO_BINARY_FILES )
 elseif(BUILD_STATIC_LIB)
     message(STATUS "..Building statically (-DBUILD_STATIC_LIB=OFF to disable)")
     add_library(${CURLINHO_LIBRARIES} STATIC ${SOURCE_FILES})
 endif ()
-set(CURLINHO_LIBRARY_DIRS
-        ${CURLINHO_LIBRARY_DIRS}
-        ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:${CURLINHO_LIBRARIES}>
+set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
+        ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_LINKER_FILE_NAME:${CURLINHO_LIBRARIES}>
         CACHE INTERNAL "curlinho lib dirs" FORCE)
 add_definitions(-DCURL_STATICLIB)
 set_target_properties(${CURLINHO_LIBRARIES} PROPERTIES
@@ -70,13 +73,17 @@ IF (MSVC)
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcrypto.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/nghttp2_static.lib
                 )
-        set(CURLINHO_LIBRARY_DIRS
-                ${CURLINHO_LIBRARY_DIRS}
+        set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcurl.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libssl.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcrypto.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/nghttp2_static.lib
                 CACHE INTERNAL "curlinho lib dirs" FORCE)
+        set(CURLINHO_BINARY_DIRS ${CURLINHO_BINARY_DIRS}
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x86/libcrypto-1_1.dll
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x86/libssl-1_1.dll
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x86/curl-ca-bundle.crt
+                CACHE INTERNAL "curlinho binary dirs" FORCE)
     endif()
 ENDIF()
 
