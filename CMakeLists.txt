@@ -19,6 +19,8 @@ set(CURLINHO_INCLUDE_DIRS
     CACHE INTERNAL "curlinho include dirs" FORCE)
 
 set(CURLINHO_LIBRARIES curlinho CACHE INTERNAL "curlinho library" FORCE)
+set(CURLINHO_LIBRARY_DIRS "" CACHE INTERNAL "curlinho lib dirs" FORCE)
+set(CURLINHO_BINARY_DIRS "" CACHE INTERNAL "curlinho binary dirs" FORCE)
 ##################################################
 
 ## Enable warnings.
@@ -38,6 +40,10 @@ elseif(BUILD_STATIC_LIB)
     message(STATUS "..Building statically (-DBUILD_STATIC_LIB=OFF to disable)")
     add_library(${CURLINHO_LIBRARIES} STATIC ${SOURCE_FILES})
 endif ()
+set(CURLINHO_LIBRARY_DIRS
+        ${CURLINHO_LIBRARY_DIRS}
+        ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:${CURLINHO_LIBRARIES}>
+        CACHE INTERNAL "curlinho lib dirs" FORCE)
 add_definitions(-DCURL_STATICLIB)
 set_target_properties(${CURLINHO_LIBRARIES} PROPERTIES
         DEBUG_POSTFIX -debug)
@@ -64,6 +70,13 @@ IF (MSVC)
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcrypto.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/nghttp2_static.lib
                 )
+        set(CURLINHO_LIBRARY_DIRS
+                ${CURLINHO_LIBRARY_DIRS}
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcurl.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libssl.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcrypto.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/nghttp2_static.lib
+                CACHE INTERNAL "curlinho lib dirs" FORCE)
     endif()
 ENDIF()
 
