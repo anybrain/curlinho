@@ -23,8 +23,6 @@ Session::Session() {
         curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
         curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_->error);
         curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
-        // apply the default options defined earlier!
-        applyDefaults();
 
 #if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
         curl_easy_setopt(curl, CURLOPT_CAINFO, "curl-ca-bundle.crt");
@@ -57,8 +55,7 @@ CurlHolder *Session::newHolder() {
   return holder;
 }
 
-void Session::applyDefaults() {
-  Defaults &defaults = Defaults::Instance();
+void Session::applyDefaults(Defaults &defaults) {
   if(defaults.HasUrl()) { SetUrl(defaults.url_); }
   if(defaults.HasAuth()) { SetAuth(defaults.auth_); }
   if(defaults.HasTimeout()) { SetTimeout(defaults.timeout_); }

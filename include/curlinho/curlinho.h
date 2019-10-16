@@ -52,6 +52,7 @@ void SetDefaults(Options &&... ts) {
 template <typename... Options>
 Response Get(const std::string &path, Options &&... ts) {
   Session session;
+  session.applyDefaults(Defaults::Instance());
   priv::set_option(session, CRL_FWD(ts)...);
   if (!path.empty()) {
     session.AppendUrl(path);
@@ -72,6 +73,7 @@ template <typename... Options>
 Response Post(const std::string &path, const Body &body,
               Options &&... ts) {
   Session session;
+  session.applyDefaults(Defaults::Instance());
   priv::set_option(session, CRL_FWD(ts)...);
   if (!path.empty()) {
     session.AppendUrl(path);

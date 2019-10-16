@@ -23,7 +23,6 @@ int main() {
           ProtocolVersion{curlinho::HTTP::v2},
           retries
       );
-
   Response res = curlinho::Get("425");
   auto j = nlohmann::json::parse(res.text);
   std::cout << j.dump() << std::endl;

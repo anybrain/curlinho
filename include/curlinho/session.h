@@ -26,6 +26,7 @@ class Session {
     Session();
     ~Session() = default;
 
+    void applyDefaults(Defaults &defaults);
     void AppendUrl(const Url &url);
     void SetUrl(const Url &url);
     void SetParameters(const Parameters &parameters);
@@ -62,7 +63,6 @@ class Session {
 
     Response makeRequest(CURL* curl);
     Response makeRequestRetries(CURL* curl);
-    void applyDefaults();
     static void freeHolder(CurlHolder* holder);
     static CurlHolder* newHolder();
 };
