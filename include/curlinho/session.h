@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <functional>
 
 #include "curlinho/auth.h"
 #include "curlinho/body.h"
@@ -15,9 +16,9 @@
 namespace curlinho {
 
 struct CurlHolder {
-  CURL* handle;
-  struct curl_slist* chunk;
-  struct curl_httppost* formpost;
+  CURL *handle;
+  struct curl_slist *chunk;
+  struct curl_httppost *formpost;
   char error[CURL_ERROR_SIZE];
 };
 
@@ -40,14 +41,14 @@ class Session {
     void SetRetryPolicy(const RetryPolicy &retryPolicy);
 
     // Used in templated functions
-    void SetOption(const Url& url);
-    void SetOption(const Parameters& parameters);
-    void SetOption(Parameters&& parameters);
-    void SetOption(const Headers& headers);
-    void SetOption(const Timeout& timeout);
-    void SetOption(const Authentication& auth);
-    void SetOption(Body&& body);
-    void SetOption(const Body& body);
+    void SetOption(const Url &url);
+    void SetOption(const Parameters &parameters);
+    void SetOption(Parameters &&parameters);
+    void SetOption(const Headers &headers);
+    void SetOption(const Timeout &timeout);
+    void SetOption(const Authentication &auth);
+    void SetOption(Body &&body);
+    void SetOption(const Body &body);
     void SetOption(const ProtocolVersion &protocol_version);
     void SetOption(const RetryPolicy &retryPolicy);
 
@@ -55,16 +56,16 @@ class Session {
     Response Post();
 
   private:
-    std::unique_ptr<CurlHolder, std::function<void(CurlHolder*)>> curl_;
+    std::unique_ptr<CurlHolder, std::function<void(CurlHolder *)>> curl_;
     Url url_;
     Parameters parameters_;
     Headers headers_;
     RetryPolicy retryPolicy_;
 
-    Response makeRequest(CURL* curl);
-    Response makeRequestRetries(CURL* curl);
-    static void freeHolder(CurlHolder* holder);
-    static CurlHolder* newHolder();
+    Response makeRequest(CURL *curl);
+    Response makeRequestRetries(CURL *curl);
+    static void freeHolder(CurlHolder *holder);
+    static CurlHolder *newHolder();
 };
 
 } // namespace curlinho

@@ -24,9 +24,7 @@ int main() {
           retries
       );
   Response res = curlinho::Get("425");
-  auto j = nlohmann::json::parse(res.text);
-  std::cout << j.dump() << std::endl;
-  std::cout << j["description"] << std::endl;
+  std::cout << res.text << std::endl;
   for (auto item : res.headers) {
     std::cout << item.first << " - " << item.second << std::endl;
   }

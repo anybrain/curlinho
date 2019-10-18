@@ -7,7 +7,6 @@
 #include <string>
 
 #include "curlinho/defines.h"
-#include "nlohmann/json.hpp"
 
 namespace curlinho {
 
@@ -29,7 +28,6 @@ class Body : public std::string {
     template <class InputIterator>
     explicit Body(InputIterator first, InputIterator last)
             : std::string(first, last) {}
-    explicit Body(nlohmann::json &j) :std::string(std::move(j.dump())) {}
 };
 
 } // namespace cpr
