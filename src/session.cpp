@@ -25,7 +25,11 @@ Session::Session() {
         curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
 
 #if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
-        curl_easy_setopt(curl, CURLOPT_CAINFO, "curl-ca-bundle.crt");
+        try {
+          curl_easy_setopt(curl, CURLOPT_CAINFO, "cert/curl-ca-bundle.crt");
+        } catch (...) {
+          curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
+        }
 #endif
 #ifdef CPR_CURL_NOSIGNAL
         curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
