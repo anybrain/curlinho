@@ -2,12 +2,13 @@
 #define CPR_DEFINES_H
 
 #include <utility>
+#include "plog/Log.h"
 
 #define CRL_FWD(...) ::std::forward<decltype(__VA_ARGS__)>(__VA_ARGS__)
 
 /// change this define to use your logger!
-#define CRL_LOG std::cout
-#define CRL_LOG_ERROR std::cerr
+#define CRL_LOG PLOG_DEBUG
+#define CRL_LOG_ERROR PLOG_ERROR
 
 #if defined(__APPLE__)
     #include <unistd.h>
