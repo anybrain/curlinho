@@ -58,7 +58,9 @@ set_target_properties(${CURLINHO_LIBRARIES} PROPERTIES
 IF (APPLE)
     find_package(CURL REQUIRED)
     target_link_libraries(${CURLINHO_LIBRARIES}
-            ${CURL_LIBRARIES})
+            ${CURL_LIBRARIES}
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.1.0.0.dylib
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.1.0.0.dylib)
 ENDIF()
 
 IF (UNIX AND NOT APPLE)
