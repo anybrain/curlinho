@@ -61,6 +61,11 @@ IF (APPLE)
             ${CURL_LIBRARIES}
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.1.0.0.dylib
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.1.0.0.dylib)
+
+    set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.1.0.0.dylib
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.1.0.0.dylib
+            CACHE INTERNAL "curlinho lib dirs" FORCE)
 ENDIF()
 
 IF (UNIX AND NOT APPLE)

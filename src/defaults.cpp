@@ -4,6 +4,8 @@
 */
 
 #include "curlinho/defaults.h"
+#include "curlinho/hmac.h"
+
 namespace curlinho {
 void Defaults::SetUrl(const Url &url) { url_ = url; }
 void Defaults::SetHeaders(const Headers &headers) { headers_ = headers; }
