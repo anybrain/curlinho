@@ -69,6 +69,12 @@ void Session::applyDefaults(Defaults &defaults) {
   SetRetryPolicy(defaults.retryPolicy_);
 }
 
+void Session::PrepareHmac(curlinho::Hmac hmac, const std::string &path,
+                          const std::string &method, const std::string &body) {
+  hmac.prepareSignature(path, method, body);
+  SetHeaders(hmac.getHmacHeaders());
+}
+
 void Session::SetUrl(const Url &url) {
   url_ = url;
 }
