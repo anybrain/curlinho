@@ -11,7 +11,7 @@
 #include "curlinho/parameters.h"
 #include "curlinho/response.h"
 #include "curlinho/util.h"
-#include "defaults.h"
+#include "curlinho/defaults.h"
 
 namespace curlinho {
 

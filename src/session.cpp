@@ -101,7 +101,7 @@ void Session::SetHeaders(const Headers &headers) {
     struct curl_slist *chunk = nullptr;
     for (const auto &header : headers_) {
       auto header_string = std::string{header.first};
-      if (header.second.empty()) {
+       if (header.second.empty()) {
         header_string += ";";
       } else {
         header_string += ": " + header.second;
