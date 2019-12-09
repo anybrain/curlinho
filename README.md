@@ -21,6 +21,7 @@ Curlinho currently supports:
 * Fully Concurrent POST requests
 * OpenSSL
 * HTTP/2 Protocol
+* Hmac authetication
 
 ## Integration
 
