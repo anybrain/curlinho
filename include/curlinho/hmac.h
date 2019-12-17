@@ -19,10 +19,11 @@ namespace curlinho {
 class Hmac {
   public:
   Hmac() = default;
-  Hmac(std::string username, std::string secret, std::string host)
-      : username_{std::move(username)}, secret_{std::move(secret)}, host_{std::move(host)} {};
+  Hmac(std::string username, std::string secret, std::string host, bool validation)
+      : username_{std::move(username)}, secret_{std::move(secret)}, host_{std::move(host)}, bodyValidation_{validation} {};
 
   bool empty() { return username_.empty() || secret_.empty() || host_.empty(); };
+  void setBodyValidation(bool validation) { bodyValidation_ = validation; }
 
   void prepareSignature(const std::string &path, const std::string &method,
                         const std::string &body) {
@@ -33,9 +34,13 @@ class Hmac {
     strftime(date, 50, "%a, %d %b %Y %H:%M:%S GMT", time_info);
     date_ = std::string(date);
     std::string requestLine = method + " " + path + " HTTP/2.0";
-    digest_ = "SHA-256=" + sha256_base64(body);
-    std::string stringToSign =
-        "date: " + date_ + "\nhost: " + host_ + "\n" + requestLine + "\ndigest: " + digest_;
+    std::string headersList = "date host request-line";
+    std::string stringToSign = "date: " + date_ + "\nhost: " + host_ + "\n" + requestLine;
+    if (bodyValidation_) {
+      digest_ = "SHA-256=" + sha256_base64(body);
+      stringToSign.append("\ndigest: " + digest_);
+      headersList.append(" digest");	
+	}
 
     // Using sha256 hash engine here.
     unsigned char *hmac_sha256 =
@@ -45,7 +50,7 @@ class Hmac {
     std::string signature = encryption::base64_encode(hmac_sha256, SHA256_DIGEST_LENGTH);
 
     authorization_ = "hmac username=\"" + username_ + "\"," + "algorithm=\"hmac-sha256\"," +
-                     "headers=\"date host request-line digest\"," + "signature=\"" + signature +
+                     "headers=\"" + headersList + "\"," + "signature=\"" + signature +
                      "\"";
     PLOG_DEBUG << "date: " << date_;
     PLOG_DEBUG << "requestLine: " << requestLine;
@@ -55,8 +60,12 @@ class Hmac {
   }
 
   Headers getHmacHeaders() {
-    return Headers{
-        {"Date", date_}, {"Authorization", authorization_}, {"Digest", digest_}, {"Host", host_}};
+    if (bodyValidation_) {
+		return Headers{
+			{"Date", date_}, {"Authorization", authorization_}, {"Digest", digest_}, {"Host", host_}};
+    } else {
+      return Headers{ {"Date", date_}, {"Authorization", authorization_}, {"Host", host_} };
+    }
   }
 
   static inline std::string sha256_base64(const std::string &text) {
@@ -78,6 +87,7 @@ class Hmac {
   std::string secret_;
   std::string date_;
   std::string host_;
+  bool bodyValidation_;
 };
 
 } // namespace curlinho
