@@ -74,27 +74,29 @@ IF (UNIX AND NOT APPLE)
 ENDIF ()
 
 IF (MSVC)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS -DUNICODE -D_UNICODE -DASSEMBLYDEBUG)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -DUNICODE -D_UNICODE -DASSEMBLYDEBUG -DCURL_STATICLIB)
     target_link_libraries(${CURLINHO_LIBRARIES} ws2_32.lib wldap32.lib crypt32.lib normaliz.lib)
     if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         target_link_libraries(${CURLINHO_LIBRARIES}
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcurl.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libssl.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcrypto.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/nghttp2_static.lib
+				${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/nghttp2.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/zlib.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libeay32.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/ssleay32.lib
                 )
         set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcurl.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libssl.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcrypto.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/nghttp2_static.lib
+				${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/nghttp2.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/zlib.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libeay32.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/ssleay32.lib
                 CACHE INTERNAL "curlinho lib dirs" FORCE)
         set(CURLINHO_BINARY_DIRS ${CURLINHO_BINARY_DIRS}
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x86/libcrypto-1_1.dll
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x86/libssl-1_1.dll
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x86/nghttp2.dll
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x86/curl-ca-bundle.crt
                 CACHE INTERNAL "curlinho binary dirs" FORCE)
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+		message("IS 64 BIT !!!!!")
         target_link_libraries(${CURLINHO_LIBRARIES}
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/libcurl.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/nghttp2.lib
