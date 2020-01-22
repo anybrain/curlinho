@@ -52,11 +52,13 @@ class Hmac {
     authorization_ = "hmac username=\"" + username_ + "\"," + "algorithm=\"hmac-sha256\"," +
                      "headers=\"" + headersList + "\"," + "signature=\"" + signature +
                      "\"";
-    PLOG_DEBUG << "date: " << date_;
     PLOG_DEBUG << "requestLine: " << requestLine;
-    PLOG_DEBUG << "digest: " << digest_;
     PLOG_DEBUG << "Signature: " << signature;
-    PLOG_DEBUG << "Authorization: " << authorization_;
+
+    PLOG_DEBUG << "Date: " << date_ << "\n" 
+		<< "Authorization: " << authorization_ << "\n" 
+		<< "Digest: " << digest_ << "\n"
+		<< "Host: " << host_;
   }
 
   Headers getHmacHeaders() {
