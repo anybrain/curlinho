@@ -8,6 +8,7 @@
 #include "curl/curl.h"
 #include "curlinho/session.h"
 #include "curlinho/defaults.h"
+#include "curlinho/hmac.h"
 
 #include <functional>
 #include <future>
@@ -57,6 +58,9 @@ Response Get(const std::string &path, Options &&... ts) {
   if (!path.empty()) {
     session.AppendUrl(path);
   }
+  if(Defaults::Instance().HasHmac()) {
+    session.PrepareHmac(Defaults::Instance().GetHmacAuth(), path, "GET", "");
+  }
   return session.Get();
 }
 
@@ -77,6 +81,9 @@ Response Post(const std::string &path, const Body &body,
   priv::set_option(session, CRL_FWD(ts)...);
   if (!path.empty()) {
     session.AppendUrl(path);
+  }
+  if(Defaults::Instance().HasHmac()) {
+    session.PrepareHmac(Defaults::Instance().GetHmacAuth(), path, "POST", body);
   }
   session.SetBody(body);
   return session.Post();

@@ -24,7 +24,7 @@ Session::Session() {
     curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
 
 #if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
-    curl_easy_setopt(curl, CURLOPT_CAINFO, "cert/curl-ca-bundle.crt");
+    curl_easy_setopt(curl, CURLOPT_CAINFO, "curl-ca-bundle.crt");
 #endif
 #ifdef CPR_CURL_NOSIGNAL
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
@@ -69,6 +69,12 @@ void Session::applyDefaults(Defaults &defaults) {
   SetRetryPolicy(defaults.retryPolicy_);
 }
 
+void Session::PrepareHmac(curlinho::Hmac hmac, const std::string &path,
+                          const std::string &method, const std::string &body) {
+  hmac.prepareSignature(path, method, body);
+  SetHeaders(hmac.getHmacHeaders());
+}
+
 void Session::SetUrl(const Url &url) {
   url_ = url;
 }
@@ -95,7 +101,7 @@ void Session::SetHeaders(const Headers &headers) {
     struct curl_slist *chunk = nullptr;
     for (const auto &header : headers_) {
       auto header_string = std::string{header.first};
-      if (header.second.empty()) {
+       if (header.second.empty()) {
         header_string += ";";
       } else {
         header_string += ": " + header.second;
