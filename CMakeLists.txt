@@ -65,13 +65,15 @@ set_target_properties( ${CURLINHO_LIBRARIES} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY
 IF (APPLE)
     find_package(CURL REQUIRED)
     target_link_libraries(${CURLINHO_LIBRARIES}
-            ${CURL_LIBRARIES}
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.1.0.0.dylib
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.1.0.0.dylib)
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
+            #${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.1.0.0.dylib
+            #${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.1.0.0.dylib
+            ${CURL_LIBRARIES})
 
     set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.1.0.0.dylib
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.1.0.0.dylib
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
             CACHE INTERNAL "curlinho lib dirs" FORCE)
 ENDIF()
 
