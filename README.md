@@ -26,10 +26,10 @@ Curlinho currently supports:
 
 If you need to integrate Curlinho with your project, the primary way is to use git submodules. Add this repository as a submodule of your root repository:
 
-```bash
-git submodule add git@github.com:jlsilva1994/curlinho.git
+```shell
+git submodule add git@github.com:anybrain/curlinho.git
 OR 
-git submodule add https://github.com/jlsilva1994/curlinho.git
+git submodule add https://github.com/anybrain/curlinho.git
 
 git submodule update --init --recursive
 ```
