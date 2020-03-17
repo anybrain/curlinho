@@ -1,11 +1,10 @@
-# curlinho
-A minimalist wrapper around curl, with compability with recent features like http2.0 protocol
-This project is based on the design of
-[C++ Requests]( http://whoshuu.github.io/cpr/) (Curl for People) project.
+# Curlinho
+A minimalist wrapper around Curl, with compability with recent features like HTTP/2 protocol.
+This project is based on the design of [C++ Requests](https://whoshuu.github.io/cpr) (Curl for People) project.
 
-This Project is compatible with Mac osx and Windows (MSVC).
+This project is compatible with macOS and Windows (MSVC).
 
-The Pre-compiled libraries and binaries of Curl and its dependencies, necessary for the curlinho to work, are available in the dependencies folder.
+The precompiled libraries and binaries of Curl and its dependencies, necessary for the Curlinho to work, are available in the dependencies folder.
 
 ## Features
 
@@ -17,17 +16,17 @@ Curlinho currently supports:
 * Timeout specification
 * Asynchronous requests
 * Callback interface
-* Custom Retry Policy
-* Fully Concurrent POST requests
+* Custom retry policy
+* Fully concurrent POST requests
 * OpenSSL
-* HTTP/2 Protocol
-* Hmac authetication
+* HTTP/2 protocol
+* HMAC authetication
 
 ## Integration
 
 If you need to integrate Curlinho with your project, the primary way is to use git submodules. Add this repository as a submodule of your root repository:
 
-```shell
+```bash
 git submodule add git@github.com:jlsilva1994/curlinho.git
 OR 
 git submodule add https://github.com/jlsilva1994/curlinho.git
@@ -35,7 +34,7 @@ git submodule add https://github.com/jlsilva1994/curlinho.git
 git submodule update --init --recursive
 ```
 
-Next, add this subdirectory to your CMakeLists.txt before declaring any targets that might use it:
+Next, add this subdirectory to your `CMakeLists.txt` before declaring any targets that might use it:
 
 ```cmake
 add_subdirectory(curlinho)
