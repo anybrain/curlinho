@@ -2,8 +2,8 @@
  * Created by José Luís Silva on 2019-11-29.
  * Copyright (c) 2019 Deeep. All rights reserved.
  */
-#ifndef DEEEP_SDK_CPP_HMAC_H
-#define DEEEP_SDK_CPP_HMAC_H
+#ifndef CURLINHO_HMAC_H
+#define CURLINHO_HMAC_H
 
 #include "plog/Log.h"
 #include "curlinho/encryption/base64.h"
@@ -94,4 +94,4 @@ class Hmac {
 
 } // namespace curlinho
 
-#endif // DEEEP_SDK_CPP_HMAC_H
+#endif // CURLINHO_HMAC_H
