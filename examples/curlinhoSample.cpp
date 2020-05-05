@@ -1,6 +1,6 @@
 /*
  * Created by Serafim Pinto on 2019-06-05.
- * Copyright (c) 2019 Deeep. All rights reserved.
+ * Copyright (c) 2019 Anybrain. All rights reserved.
  */
 #include "curlinho/curlinho.h"
 
