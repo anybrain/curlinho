@@ -1,6 +1,6 @@
 /*
- * Created by José Luís Silva on 2019-11-29.
- * Copyright (c) 2019 Deeep. All rights reserved.
+ * Created by Jose Silva on 2019-11-29.
+ * Copyright (c) 2019 Anybrain. All rights reserved.
  */
 #ifndef CURLINHO_HMAC_H
 #define CURLINHO_HMAC_H

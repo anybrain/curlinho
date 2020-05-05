@@ -554,7 +554,7 @@ MigrationBackup/
 #all .idea files
 .idea/
 
-#project files inside deeep
+#project files inside anybrain
 *.vcxproj
 *.filters
 *.sln

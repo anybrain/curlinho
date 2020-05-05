@@ -1,5 +1,5 @@
 /*
-* Created by José Luis Silva on 2019-09-05.
+* Created by Jose Silva on 2019-09-05.
 * Copyright (c) 2019 MIT. All rights reserved.
 */
 #ifndef CURLINHO_CURLINHO_H
