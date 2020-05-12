@@ -58,8 +58,8 @@ Response Get(const std::string &path, Options &&... ts) {
   if (!path.empty()) {
     session.AppendUrl(path);
   }
-  if(Defaults::Instance().HasHmac()) {
-    session.PrepareHmac(Defaults::Instance().GetHmacAuth(), path, "GET", "");
+  if(session.HasHmac()) {
+    session.PrepareHmac(path, "GET", "");
   }
   return session.Get();
 }
@@ -82,8 +82,8 @@ Response Post(const std::string &path, const Body &body,
   if (!path.empty()) {
     session.AppendUrl(path);
   }
-  if(Defaults::Instance().HasHmac()) {
-    session.PrepareHmac(Defaults::Instance().GetHmacAuth(), path, "POST", body);
+  if(session.HasHmac()) {
+    session.PrepareHmac(path, "POST", body);
   }
   session.SetBody(body);
   return session.Post();
