@@ -8,10 +8,10 @@
 #include "curlinho/auth.h"
 #include "curlinho/body.h"
 #include "curlinho/cprtypes.h"
+#include "curlinho/defaults.h"
 #include "curlinho/parameters.h"
 #include "curlinho/response.h"
 #include "curlinho/util.h"
-#include "curlinho/defaults.h"
 
 namespace curlinho {
 
@@ -27,7 +27,7 @@ class Session {
   Session();
   ~Session() = default;
 
-  void applyDefaults(Defaults &defaults);
+  void applyDefaults();
   void AppendUrl(const Url &url);
   void SetUrl(const Url &url);
   void SetParameters(const Parameters &parameters);
@@ -40,8 +40,7 @@ class Session {
   void SetProtocolVersion(const ProtocolVersion &protocol_version);
   void SetRetryPolicy(const RetryPolicy &retryPolicy);
   void SetHmac(const Hmac &hmac);
-  void PrepareHmac(const std::string &path, const std::string &method,
-                   const std::string &body);
+  void PrepareHmac(const std::string &path, const std::string &method, const std::string &body);
   bool HasHmac() { return !hmac_.empty(); };
 
   // Used in templated functions
@@ -69,9 +68,9 @@ class Session {
   Hmac hmac_;
 
   Response makeRequest(CURL *curl);
-  Response makeRequestRetries(CURL *curl);
   static void freeHolder(CurlHolder *holder);
   static CurlHolder *newHolder();
+  static CurlHolder *cloneHolder(CurlHolder *other);
 };
 
 } // namespace curlinho
