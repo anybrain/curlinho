@@ -6,6 +6,7 @@
 #include <functional>
 #include <iostream>
 #include <string>
+#include <thread>
 
 namespace curlinho {
 
@@ -54,7 +55,16 @@ CurlHolder *Session::newHolder() {
   return holder;
 }
 
-void Session::applyDefaults(Defaults &defaults) {
+CurlHolder *Session::cloneHolder(CurlHolder *other) {
+  CurlHolder *holder = new CurlHolder();
+  holder->handle = other->handle;
+  holder->chunk = other->chunk;
+  holder->formpost = other->formpost;
+  return holder;
+}
+
+void Session::applyDefaults() {
+  Defaults &defaults = Defaults::Instance();
   if (defaults.HasUrl()) {
     SetUrl(defaults.url_);
   }
@@ -64,15 +74,21 @@ void Session::applyDefaults(Defaults &defaults) {
   if (defaults.HasTimeout()) {
     SetTimeout(defaults.timeout_);
   }
+  if (defaults.HasHmac()) {
+    SetHmac(defaults.hmac_);
+  }
   SetHeaders(defaults.headers_);
   SetProtocolVersion(defaults.protocolVersion_);
   SetRetryPolicy(defaults.retryPolicy_);
 }
 
-void Session::PrepareHmac(curlinho::Hmac hmac, const std::string &path,
-                          const std::string &method, const std::string &body) {
-  hmac.prepareSignature(path, method, body);
-  SetHeaders(hmac.getHmacHeaders());
+void Session::SetHmac(const Hmac &hmac) {
+  hmac_ = hmac;
+}
+
+void Session::PrepareHmac(const std::string &path, const std::string &method, const std::string &body) {
+  hmac_.prepareSignature(path, method, body);
+  SetHeaders(hmac_.getHmacHeaders());
 }
 
 void Session::SetUrl(const Url &url) {
@@ -180,7 +196,7 @@ Response Session::Get() {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
   }
 
-  return makeRequestRetries(curl);
+  return makeRequest(curl);
 }
 
 Response Session::Post() {
@@ -190,35 +206,7 @@ Response Session::Post() {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
   }
 
-  return makeRequestRetries(curl);
-}
-
-Response Session::makeRequestRetries(CURL *curl) {
-  auto r = makeRequest(curl);
-  for (auto timer : retryPolicy_.delays_) {
-    if (r.status_code != 200 || r.error.code != CURLE_OK) {
-      if (r.error.code == CURLE_SSL_CACERT_BADFILE || r.error.code == CURLE_SSL_CERTPROBLEM) {
-        CRL_LOG << "Certificate error, retry with no certificate!" << std::endl;
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
-      } else if (r.error.code == CURLE_OPERATION_TIMEOUTED) {
-        CRL_LOG << "Request timed out, Another retry!" << std::endl;
-        CRL_SLEEP(timer);
-      } else if (std::find(retryPolicy_.recoverableCodes_.begin(),
-                           retryPolicy_.recoverableCodes_.end(),
-                           r.status_code) == retryPolicy_.recoverableCodes_.end()) {
-        CRL_LOG << "Error was not recoverable, no need to retry! - " << r.status_code << std::endl;
-        break;
-      } else {
-        CRL_LOG << "Request failed, retry in " << timer << " seconds. - " << r.status_code
-                << std::endl;
-        CRL_SLEEP(timer);
-      }
-    } else {
-      return r;
-    }
-    r = makeRequest(curl);
-  }
-  return r;
+  return makeRequest(curl);
 }
 
 Response Session::makeRequest(CURL *curl) {
@@ -283,6 +271,9 @@ void Session::SetOption(const ProtocolVersion &protocolVersion) {
 }
 void Session::SetOption(const RetryPolicy &retryPolicy) {
   SetRetryPolicy(retryPolicy);
+}
+void Session::SetOption(const Hmac &hmac) {
+  SetHmac(hmac);
 }
 
 } // namespace curlinho
