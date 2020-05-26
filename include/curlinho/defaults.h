@@ -57,6 +57,8 @@ public:
 private:
   Defaults() : timeout_(0), auth_("", ""), protocolVersion_(HTTP::v1x) {};
   ~Defaults() = default;
+  Defaults(Defaults const &) = delete;
+  Defaults &operator=(Defaults const &) = delete;
 };
 }
 #endif // CURLINHO_DEFAULTS_H
