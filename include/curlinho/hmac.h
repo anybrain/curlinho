@@ -74,7 +74,6 @@ class Hmac {
     char *string = new char[text.length() + 1];
     strcpy(string, text.c_str());
     unsigned char hash[SHA256_DIGEST_LENGTH];
-    char outputBuffer[65];
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
     SHA256_Update(&sha256, string, strlen(string));
