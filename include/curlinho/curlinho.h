@@ -51,12 +51,6 @@ void SetDefaults(Options &&... ts) {
 
 // Get methods
 template <typename... Options>
-Response Get(const std::string &path, Options &&... ts) {
-  Response res = GetIntern(path, std::move(ts)...);
-  handleGetRetries(res, path, std::move(ts)...);
-  return res;
-}
-template <typename... Options>
 Response GetIntern(const std::string &path, Options &&... ts) {
   Session session;
   session.applyDefaults();
@@ -68,6 +62,13 @@ Response GetIntern(const std::string &path, Options &&... ts) {
     session.PrepareHmac(path, "GET", "");
   }
   return session.Get();
+}
+
+template <typename... Options>
+Response Get(const std::string &path, Options &&... ts) {
+  Response res = GetIntern(path, std::move(ts)...);
+  handleGetRetries(res, path, std::move(ts)...);
+  return res;
 }
 
 // Get async methods
