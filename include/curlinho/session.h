@@ -5,6 +5,10 @@
 #include <functional>
 #include <memory>
 
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+
+#include <curl/curl.h>
 #include "curlinho/auth.h"
 #include "curlinho/body.h"
 #include "curlinho/cprtypes.h"
@@ -71,6 +75,7 @@ class Session {
   static void freeHolder(CurlHolder *holder);
   static CurlHolder *newHolder();
   static CurlHolder *cloneHolder(CurlHolder *other);
+  static CURLcode sslCert(CURL *curl, void *sslctx, void *parm);
 };
 
 } // namespace curlinho

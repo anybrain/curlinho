@@ -84,7 +84,6 @@ IF (MSVC)
                 CACHE INTERNAL "curlinho lib dirs" FORCE)
         set(CURLINHO_BINARY_DIRS ${CURLINHO_BINARY_DIRS}
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x86/nghttp2.dll
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x86/curl-ca-bundle.crt
                 CACHE INTERNAL "curlinho binary dirs" FORCE)
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		message(STATUS "Using 64bit curl libs")
@@ -104,7 +103,6 @@ IF (MSVC)
                 CACHE INTERNAL "curlinho lib dirs" FORCE)
         set(CURLINHO_BINARY_DIRS ${CURLINHO_BINARY_DIRS}
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x64/nghttp2.dll
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x64/curl-ca-bundle.crt
                 CACHE INTERNAL "curlinho binary dirs" FORCE)
     endif()
 ENDIF()
