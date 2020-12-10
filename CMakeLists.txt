@@ -72,19 +72,17 @@ IF (MSVC)
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcurl.lib
 				${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/nghttp2.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/zlib.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libeay32.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/ssleay32.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcrypto.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libssl.lib
                 )
         set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcurl.lib
 				${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/nghttp2.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/zlib.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libeay32.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/ssleay32.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libcrypto.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x86/libssl.lib
                 CACHE INTERNAL "curlinho lib dirs" FORCE)
         set(CURLINHO_BINARY_DIRS ${CURLINHO_BINARY_DIRS}
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x86/nghttp2.dll
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x86/curl-ca-bundle.crt
                 CACHE INTERNAL "curlinho binary dirs" FORCE)
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		message(STATUS "Using 64bit curl libs")
@@ -92,19 +90,17 @@ IF (MSVC)
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/libcurl.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/nghttp2.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/zlib.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/libeay32.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/ssleay32.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/libcrypto.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/libssl.lib
                 )
         set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/libcurl.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/nghttp2.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/zlib.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/libeay32.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/ssleay32.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/libcrypto.lib
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/libssl.lib
                 CACHE INTERNAL "curlinho lib dirs" FORCE)
         set(CURLINHO_BINARY_DIRS ${CURLINHO_BINARY_DIRS}
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x64/nghttp2.dll
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/bin/MSVC/x64/curl-ca-bundle.crt
                 CACHE INTERNAL "curlinho binary dirs" FORCE)
     endif()
 ENDIF()
