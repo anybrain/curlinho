@@ -66,14 +66,14 @@ ENDIF ()
 
 IF (MSVC)
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        message(STATUS "Build curlinho with MDd FLAG")
-        set(CMAKE_CXX_FLAGS_DEBUG "/MDd")
+        message(STATUS "Build curlinho with MTd FLAG")
+        set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
         add_definitions(-D_ITERATOR_DEBUG_LEVEL=2)
     endif()
     
     if (CMAKE_BUILD_TYPE STREQUAL "Release")
-        message(STATUS "Build curlinho with MD FLAG")
-        set(CMAKE_CXX_FLAGS_RELEASE "/MD")
+        message(STATUS "Build curlinho with MT FLAG")
+        set(CMAKE_CXX_FLAGS_RELEASE "/MT")
         add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
     endif()
 
