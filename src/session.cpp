@@ -1,6 +1,7 @@
 #include "curlinho/session.h"
 #include "curl/curl.h"
 #include "curlinho/util.h"
+#include "curlinho/certfile.h"
 
 #include <algorithm>
 #include <functional>
@@ -25,7 +26,9 @@ Session::Session() {
     curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
 
 #if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
-    curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+    curl_easy_setopt(curl, CURLOPT_SSLCERTTYPE, "PEM");
+    curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, curlinho::certFile::sslctx_function);
+    curl_easy_setopt(curl, CURLOPT_SSL_CTX_DATA, curlinho::certFile::certstring);
 #endif
 #ifdef CPR_CURL_NOSIGNAL
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
@@ -176,6 +179,7 @@ void Session::SetProtocolVersion(const ProtocolVersion &protocol_version) {
       if (curl_version_info(CURLVERSION_NOW)->features & CURL_VERSION_HTTP2) {
         curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
       } else {
+        curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         std::cerr << "No HTTP/2 support" << std::endl;
       }
     }
