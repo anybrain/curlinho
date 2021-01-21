@@ -24,11 +24,14 @@ Session::Session() {
     curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
     curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_->error);
     curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
-
 #if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
+  if (version_info->age >= CURLVERSION_EIGHTH) {
+    curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+  } else {
     curl_easy_setopt(curl, CURLOPT_SSLCERTTYPE, "PEM");
     curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, curlinho::certFile::sslctx_function);
     curl_easy_setopt(curl, CURLOPT_SSL_CTX_DATA, curlinho::certFile::certstring);
+  }
 #endif
 #ifdef CPR_CURL_NOSIGNAL
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
