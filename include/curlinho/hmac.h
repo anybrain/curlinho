@@ -27,11 +27,16 @@ class Hmac {
 
   void prepareSignature(const std::string &path, const std::string &method,
                         const std::string &body) {
+    struct tm time_info;
     time_t rawtime;
     time(&rawtime);
-    struct tm *time_info = gmtime(&rawtime);
+    
+    if(gmtime_s(&time_info, &rawtime)) {
+      PLOG_ERROR << "Invalid conversion on gmtime_s function.";
+    }
+
     char date[50];
-    strftime(date, 50, "%a, %d %b %Y %H:%M:%S GMT", time_info);
+    strftime(date, 50, "%a, %d %b %Y %H:%M:%S GMT", &time_info);
     date_ = std::string(date);
     std::string requestLine = method + " " + path + " HTTP/2.0";
     std::string headersList = "date host request-line";
@@ -72,7 +77,7 @@ class Hmac {
 
   static inline std::string sha256_base64(const std::string &text) {
     char *string = new char[text.length() + 1];
-    strcpy(string, text.c_str());
+    strcpy_s(string, text.length() + 1, text.c_str());
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
