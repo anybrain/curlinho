@@ -42,7 +42,7 @@ static const char certstring[] =
     "Q+6IHdfGjjxDah2nGN59PRbxYvnKkKj9\n"
     "-----END CERTIFICATE-----\n";
 
-static CURLcode sslctx_function(CURL *curl, void *sslctx, void *parm) {
+static CURLcode sslctx_function(CURL*, void *sslctx, void*) {
   X509_STORE *store;
   X509 *cert = NULL;
   BIO *bio;
