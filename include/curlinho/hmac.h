@@ -44,7 +44,7 @@ class Hmac {
 
     // Using sha256 hash engine here.
     unsigned char *hmac_sha256 =
-        HMAC(EVP_sha256(), (void *)secret_.c_str(), secret_.length(),
+        HMAC(EVP_sha256(), (void *)secret_.c_str(), (int)secret_.length(),
              (unsigned char *)stringToSign.c_str(), stringToSign.length(), NULL, NULL);
 
     std::string signature = encryption::base64_encode(hmac_sha256, SHA256_DIGEST_LENGTH);
