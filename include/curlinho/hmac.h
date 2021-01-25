@@ -30,11 +30,11 @@ class Hmac {
     struct tm time_info;
     time_t rawtime;
     time(&rawtime);
-    
-    if(gmtime_s(&time_info, &rawtime)) {
-      PLOG_ERROR << "Invalid conversion on gmtime_s function.";
-    }
-
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    gmtime_s(&time_info, &rawtime);
+#else
+    gmtime_r(&rawtime, &time_info);
+#endif
     char date[50];
     strftime(date, 50, "%a, %d %b %Y %H:%M:%S GMT", &time_info);
     date_ = std::string(date);
@@ -77,7 +77,11 @@ class Hmac {
 
   static inline std::string sha256_base64(const std::string &text) {
     char *string = new char[text.length() + 1];
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
     strcpy_s(string, text.length() + 1, text.c_str());
+#else
+    strcpy(string, text.c_str());
+#endif
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
