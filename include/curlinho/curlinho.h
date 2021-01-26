@@ -20,7 +20,9 @@ using AsyncResponse = std::future<Response>;
 
 namespace priv {
 
-inline void set_option(Session &session) {}
+inline void set_option(Session &session) {
+  session.SetOption();
+}
 template <typename Option>
 void set_option(Session &session, Option &&t) {
   session.SetOption(CRL_FWD(t));
