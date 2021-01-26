@@ -72,7 +72,7 @@ namespace plog
 
                 case debug:
                 case verbose:
-                    std::cout << "\x1B[96m"; // cyan
+                    std::cout << "\x1b[32m"; // green
                     break;
 #endif
                 default:
