@@ -86,7 +86,7 @@ IF (MSVC)
         set(CMAKE_CXX_FLAGS_RELEASE "/MD -D_ITERATOR_DEBUG_LEVEL=0")
     endif()
 
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS -DUNICODE -D_UNICODE -DASSEMBLYDEBUG -DCURL_STATICLIB)
+    add_definitions(-DUNICODE -D_UNICODE -DASSEMBLYDEBUG -DCURL_STATICLIB)
     target_link_libraries(${CURLINHO_LIBRARIES} ws2_32.lib wldap32.lib crypt32.lib normaliz.lib)
     if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         target_link_libraries(${CURLINHO_LIBRARIES}
@@ -105,7 +105,6 @@ IF (MSVC)
                 CACHE INTERNAL "curlinho lib dirs" FORCE)
         set(CURLINHO_BINARY_DIRS ${CURLINHO_BINARY_DIRS}
                 CACHE INTERNAL "curlinho binary dirs" FORCE)
-
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		message(STATUS "Using 64bit curl libs")
         target_link_libraries(${CURLINHO_LIBRARIES}
