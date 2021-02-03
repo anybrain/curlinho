@@ -55,6 +55,7 @@ class Session {
   void SetOption(const ProtocolVersion &protocol_version);
   void SetOption(const RetryPolicy &retryPolicy);
   void SetOption(const Hmac &hmac);
+  void SetOption(){};
 
   Response Get();
   Response Post();
