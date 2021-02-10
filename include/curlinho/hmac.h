@@ -33,11 +33,16 @@ class Hmac {
       httpProtocol_ = "HTTP/1.1";
     }
 
+    struct tm time_info;
     time_t rawtime;
     time(&rawtime);
-    struct tm *time_info = gmtime(&rawtime);
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    gmtime_s(&time_info, &rawtime);
+#else
+    gmtime_r(&rawtime, &time_info);
+#endif
     char date[50];
-    strftime(date, 50, "%a, %d %b %Y %H:%M:%S GMT", time_info);
+    strftime(date, 50, "%a, %d %b %Y %H:%M:%S GMT", &time_info);
     date_ = std::string(date);
     std::string requestLine = method + " " + path + " " + httpProtocol_;
     std::string headersList = "date host request-line";
@@ -50,7 +55,7 @@ class Hmac {
 
     // Using sha256 hash engine here.
     unsigned char *hmac_sha256 =
-        HMAC(EVP_sha256(), (void *)secret_.c_str(), secret_.length(),
+        HMAC(EVP_sha256(), (void *)secret_.c_str(), (int)secret_.length(),
              (unsigned char *)stringToSign.c_str(), stringToSign.length(), NULL, NULL);
 
     std::string signature = encryption::base64_encode(hmac_sha256, SHA256_DIGEST_LENGTH);
@@ -78,7 +83,11 @@ class Hmac {
 
   static inline std::string sha256_base64(const std::string &text) {
     char *string = new char[text.length() + 1];
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    strcpy_s(string, text.length() + 1, text.c_str());
+#else
     strcpy(string, text.c_str());
+#endif
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
