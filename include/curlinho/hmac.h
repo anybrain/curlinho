@@ -45,7 +45,7 @@ class Hmac {
       digest_ = "SHA-256=" + sha256_base64(body);
       stringToSign.append("\ndigest: " + digest_);
       headersList.append(" digest");
-	  }
+    }
 
     // Using sha256 hash engine here.
     unsigned char *hmac_sha256 =
