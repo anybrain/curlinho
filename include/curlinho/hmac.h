@@ -50,8 +50,8 @@ class Hmac {
     if (bodyValidation_) {
       digest_ = "SHA-256=" + sha256_base64(body);
       stringToSign.append("\ndigest: " + digest_);
-      headersList.append(" digest");	
-	}
+      headersList.append(" digest");
+    }
 
     // Using sha256 hash engine here.
     unsigned char *hmac_sha256 =
@@ -63,13 +63,6 @@ class Hmac {
     authorization_ = "hmac username=\"" + username_ + "\"," + "algorithm=\"hmac-sha256\"," +
                      "headers=\"" + headersList + "\"," + "signature=\"" + signature +
                      "\"";
-    PLOG_DEBUG << "requestLine: " << requestLine;
-    PLOG_DEBUG << "Signature: " << signature;
-
-    PLOG_DEBUG << "Date: " << date_ << "\n" 
-		<< "Authorization: " << authorization_ << "\n" 
-		<< "Digest: " << digest_ << "\n"
-		<< "Host: " << host_;
   }
 
   Headers getHmacHeaders() {
