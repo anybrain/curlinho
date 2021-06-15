@@ -12,6 +12,7 @@
 #include "curlinho/parameters.h"
 #include "curlinho/response.h"
 #include "curlinho/util.h"
+#include "curlinho/certificates.h"
 
 namespace curlinho {
 
@@ -40,6 +41,7 @@ class Session {
   void SetProtocolVersion(const ProtocolVersion &protocol_version);
   void SetRetryPolicy(const RetryPolicy &retryPolicy);
   void SetHmac(const Hmac &hmac);
+  void SetCertificate(const Certificates &certificates);
   void PrepareHmac(const std::string &path, const std::string &method, const std::string &body);
   bool HasHmac() { return !hmac_.empty(); };
 
@@ -54,6 +56,7 @@ class Session {
   void SetOption(const Body &body);
   void SetOption(const ProtocolVersion &protocol_version);
   void SetOption(const RetryPolicy &retryPolicy);
+  void SetOption(const Certificates &certificates);
   void SetOption(const Hmac &hmac);
   void SetOption(){};
 
@@ -67,11 +70,13 @@ class Session {
   Headers headers_;
   RetryPolicy retryPolicy_;
   Hmac hmac_;
+  Certificates certificates_;
 
   Response makeRequest(CURL *curl);
   static void freeHolder(CurlHolder *holder);
   static CurlHolder *newHolder();
   static CurlHolder *cloneHolder(CurlHolder *other);
+  static CURLcode ctxFunction(CURL *, void *sslctx, void *parm);
 };
 
 } // namespace curlinho

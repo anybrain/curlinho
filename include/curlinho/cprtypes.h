@@ -14,6 +14,7 @@ struct CaseInsensitiveCompare {
 using Headers = std::map<std::string, std::string, CaseInsensitiveCompare>;
 using Url = std::string;
 using ProtocolVersion = enum class HTTP { v1x, v2 };
+enum class CertType { NATIVE, PEM };
 
 struct RetryPolicy {
   int nr_retries=0;
