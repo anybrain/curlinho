@@ -7,7 +7,6 @@
 
 #include "curl/curl.h"
 #include "curlinho/defaults.h"
-#include "curlinho/hmac.h"
 #include "curlinho/session.h"
 
 #include <functional>
@@ -60,9 +59,6 @@ Response GetIntern(const std::string &path, Options &&... ts) {
   if (!path.empty()) {
     session.AppendUrl(path);
   }
-  if (session.HasHmac()) {
-    session.PrepareHmac(path, "GET", "");
-  }
   return session.Get();
 }
 
@@ -97,9 +93,6 @@ Response PostIntern(const std::string &path, const Body &body, Options &&... ts)
   priv::set_option(session, CRL_FWD(ts)...);
   if (!path.empty()) {
     session.AppendUrl(path);
-  }
-  if (session.HasHmac()) {
-    session.PrepareHmac(path, "POST", body);
   }
   session.SetBody(body);
   return session.Post();

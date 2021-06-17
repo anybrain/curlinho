@@ -7,7 +7,6 @@
 
 #include "auth.h"
 #include "cprtypes.h"
-#include "hmac.h"
 #include "parameters.h"
 #include "response.h"
 #include "util.h"
@@ -28,14 +27,11 @@ public:
   void SetAuth(const Authentication &auth);
   void SetProtocolVersion(const ProtocolVersion &protocol_version);
   void SetRetryPolicy(const RetryPolicy &retryPolicy);
-  void SetHmacAuth(const Hmac &hmac);
-  Hmac GetHmacAuth();
 
   bool HasUrl();
   bool HasHeaders();
   bool HasTimeout();
   bool HasAuth();
-  bool HasHmac();
 
   // Used in templated functions
   void SetOption(const Url &url);
@@ -44,7 +40,6 @@ public:
   void SetOption(const Authentication &auth);
   void SetOption(const ProtocolVersion &protocolVersion);
   void SetOption(const RetryPolicy &retryPolicy);
-  void SetOption(const Hmac &hmac);
 
   Url url_;
   Headers headers_;
@@ -52,7 +47,6 @@ public:
   Timeout timeout_;
   ProtocolVersion protocolVersion_;
   RetryPolicy retryPolicy_;
-  Hmac hmac_;
 
 private:
   Defaults() : timeout_(0), auth_("", ""), protocolVersion_(HTTP::v1x) {};

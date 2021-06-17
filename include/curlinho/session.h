@@ -39,9 +39,6 @@ class Session {
   void SetBody(const Body &body);
   void SetProtocolVersion(const ProtocolVersion &protocol_version);
   void SetRetryPolicy(const RetryPolicy &retryPolicy);
-  void SetHmac(const Hmac &hmac);
-  void PrepareHmac(const std::string &path, const std::string &method, const std::string &body);
-  bool HasHmac() { return !hmac_.empty(); };
 
   // Used in templated functions
   void SetOption(const Url &url);
@@ -54,7 +51,6 @@ class Session {
   void SetOption(const Body &body);
   void SetOption(const ProtocolVersion &protocol_version);
   void SetOption(const RetryPolicy &retryPolicy);
-  void SetOption(const Hmac &hmac);
   void SetOption(){};
 
   Response Get();
@@ -66,7 +62,6 @@ class Session {
   Parameters parameters_;
   Headers headers_;
   RetryPolicy retryPolicy_;
-  Hmac hmac_;
 
   Response makeRequest(CURL *curl);
   static void freeHolder(CurlHolder *holder);
