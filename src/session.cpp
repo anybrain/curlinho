@@ -59,6 +59,29 @@ CurlHolder *Session::cloneHolder(CurlHolder *other) {
   return holder;
 }
 
+CURLcode Session::ctxFunction(CURL *, void *sslctx, void *parm) {
+  X509_STORE *store;
+  X509 *cert = NULL;
+  BIO *bio;
+  char *mypem = (char*)parm;
+
+  bio = BIO_new_mem_buf(mypem, -1);
+  PEM_read_bio_X509(bio, &cert, 0, NULL);
+  if (cert == NULL) {
+    return CURLE_SSL_CERTPROBLEM;
+  }
+
+  store = SSL_CTX_get_cert_store((SSL_CTX *)sslctx);
+  if (X509_STORE_add_cert(store, cert) == 0) {
+    return CURLE_SSL_CERTPROBLEM;
+  }
+
+  X509_free(cert);
+  BIO_free(bio);
+
+  return CURLE_OK;
+}
+
 void Session::applyDefaults() {
   Defaults &defaults = Defaults::Instance();
   if (defaults.HasUrl()) {
@@ -100,13 +123,15 @@ void Session::SetCertificate(const Certificates &certificates) {
     }
 
     if (certificates_.certType_ == CertType::PEM) {
+#if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
       curl_easy_setopt(curl, CURLOPT_SSLCERTTYPE, "PEM");
       curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, Session::ctxFunction);
       curl_easy_setopt(curl, CURLOPT_SSL_CTX_DATA, certificates.certString_);
+#endif
+    }
 
-      if (!certificates_.hpkp_.empty()) {
-        curl_easy_setopt(curl, CURLOPT_PINNEDPUBLICKEY, certificates.hpkp_.c_str());
-      }
+    if (!certificates_.hpkp_.empty()) {
+      curl_easy_setopt(curl, CURLOPT_PINNEDPUBLICKEY, certificates.hpkp_.c_str());
     }
   }
 }
@@ -298,29 +323,6 @@ void Session::SetOption(const Certificates &certificates) {
 }
 void Session::SetOption(const Hmac &hmac) {
   SetHmac(hmac);
-}
-
-CURLcode Session::ctxFunction(CURL *, void *sslctx, void *parm) {
-  X509_STORE *store;
-  X509 *cert = NULL;
-  BIO *bio;
-  char *mypem = (char*)parm;
-
-  bio = BIO_new_mem_buf(mypem, -1);
-  PEM_read_bio_X509(bio, &cert, 0, NULL);
-  if (cert == NULL) {
-    return CURLE_SSL_CERTPROBLEM;
-  }
-
-  store = SSL_CTX_get_cert_store((SSL_CTX *)sslctx);
-  if (X509_STORE_add_cert(store, cert) == 0) {
-    return CURLE_SSL_CERTPROBLEM;
-  }
-
-  X509_free(cert);
-  BIO_free(bio);
-
-  return CURLE_OK;
 }
 
 } // namespace curlinho

@@ -1,14 +1,16 @@
 #include "curlinho/certificates.h"
 
 namespace curlinho {
+
 Certificates::Certificates() {
   certType_ = curlinho::CertType::NATIVE;
   certString_ = "";
+  hpkp_ = "";
 }
 
-Certificates::Certificates(curlinho::CertType type) {
+Certificates::Certificates(curlinho::CertType type, std::string hpkp) {
   certType_ = type;
-  certString_ = "";
+  hpkp_ = hpkp;
 }
 
 Certificates::Certificates(curlinho::CertType type, char* certString) {
