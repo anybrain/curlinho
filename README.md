@@ -20,7 +20,6 @@ Curlinho currently supports:
 * Fully concurrent POST requests
 * OpenSSL
 * HTTP/2 protocol
-* HMAC authentication
 
 ## Integration
 
@@ -28,7 +27,7 @@ If you need to integrate Curlinho with your project, the primary way is to use g
 
 ```shell
 git submodule add git@github.com:anybrain/curlinho.git
-OR 
+OR
 git submodule add https://github.com/anybrain/curlinho.git
 
 git submodule update --init --recursive
