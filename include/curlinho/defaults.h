@@ -6,6 +6,7 @@
 #define CURLINHO_DEFAULTS_H
 
 #include "auth.h"
+#include "certificates.h"
 #include "cprtypes.h"
 #include "hmac.h"
 #include "parameters.h"
@@ -28,6 +29,7 @@ public:
   void SetAuth(const Authentication &auth);
   void SetProtocolVersion(const ProtocolVersion &protocol_version);
   void SetRetryPolicy(const RetryPolicy &retryPolicy);
+  void SetCertificate(const Certificates &certificates);
   void SetHmacAuth(const Hmac &hmac);
   Hmac GetHmacAuth();
 
@@ -45,6 +47,7 @@ public:
   void SetOption(const ProtocolVersion &protocolVersion);
   void SetOption(const RetryPolicy &retryPolicy);
   void SetOption(const Hmac &hmac);
+  void SetOption(const Certificates &certificates);
 
   Url url_;
   Headers headers_;
@@ -53,6 +56,7 @@ public:
   ProtocolVersion protocolVersion_;
   RetryPolicy retryPolicy_;
   Hmac hmac_;
+  Certificates certificates_;
 
 private:
   Defaults() : timeout_(0), auth_("", ""), protocolVersion_(HTTP::v1x) {};

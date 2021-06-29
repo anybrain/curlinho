@@ -16,7 +16,8 @@ void Defaults::SetProtocolVersion(
 void Defaults::SetRetryPolicy(const RetryPolicy &retryPolicy) {
   retryPolicy_ = retryPolicy;
 }
-void Defaults::SetHmacAuth(const curlinho::Hmac &hmac){ hmac_ = hmac;}
+void Defaults::SetHmacAuth(const curlinho::Hmac &hmac){ hmac_ = hmac; }
+void Defaults::SetCertificate(const Certificates &certificates) { certificates_ = certificates; }
 
 void Defaults::SetOption(const Url &url) { Defaults::SetUrl(url); }
 void Defaults::SetOption(const Headers &headers) { Defaults::SetHeaders(headers); }
@@ -30,6 +31,9 @@ void Defaults::SetOption(const RetryPolicy &retryPolicy) {
 }
 void Defaults::SetOption(const Hmac &hmac) {
   Defaults::SetHmacAuth(hmac);
+}
+void Defaults::SetOption(const Certificates &certificates) {
+  Defaults::SetCertificate(certificates);
 }
 
 bool Defaults::HasUrl() { return !url_.empty(); }

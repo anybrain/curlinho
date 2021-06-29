@@ -11,6 +11,7 @@
 #include <utility>
 #include <openssl/hmac.h>
 #include <openssl/sha.h>
+#include <curl/curl.h>
 #include <string>
 #include <time.h>
 
@@ -25,8 +26,13 @@ class Hmac {
   bool empty() { return username_.empty() || secret_.empty() || host_.empty(); };
   void setBodyValidation(bool validation) { bodyValidation_ = validation; }
 
-  void prepareSignature(const std::string &path, const std::string &method,
-                        const std::string &body) {
+  void prepareSignature(const std::string &path, const std::string &method, const std::string &body) {
+    if (curl_version_info(CURLVERSION_NOW)->features & CURL_VERSION_HTTP2) {
+      httpProtocol_ = "HTTP/2.0";
+    } else {
+      httpProtocol_ = "HTTP/1.1";
+    }
+
     struct tm time_info;
     time_t rawtime;
     time(&rawtime);
@@ -38,7 +44,7 @@ class Hmac {
     char date[50];
     strftime(date, 50, "%a, %d %b %Y %H:%M:%S GMT", &time_info);
     date_ = std::string(date);
-    std::string requestLine = method + " " + path + " HTTP/2.0";
+    std::string requestLine = method + " " + path + " " + httpProtocol_;
     std::string headersList = "date host request-line";
     std::string stringToSign = "date: " + date_ + "\nhost: " + host_ + "\n" + requestLine;
     if (bodyValidation_) {
@@ -90,6 +96,7 @@ class Hmac {
   std::string secret_;
   std::string date_;
   std::string host_;
+  std::string httpProtocol_;
   bool bodyValidation_;
 };
 
