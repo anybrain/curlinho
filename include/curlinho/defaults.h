@@ -43,8 +43,11 @@ public:
   void SetOption(const ProtocolVersion &protocolVersion);
   void SetOption(const RetryPolicy &retryPolicy);
   void SetOption(const Certificates &certificates);
+
+  Url url_;
   Headers headers_;
   Authentication auth_;
+  Timeout timeout_;
   ProtocolVersion protocolVersion_;
   RetryPolicy retryPolicy_;
   Certificates certificates_;
