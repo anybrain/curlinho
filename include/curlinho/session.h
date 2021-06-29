@@ -12,6 +12,7 @@
 #include "curlinho/parameters.h"
 #include "curlinho/response.h"
 #include "curlinho/util.h"
+#include "curlinho/certificates.h"
 
 namespace curlinho {
 
@@ -39,6 +40,7 @@ class Session {
   void SetBody(const Body &body);
   void SetProtocolVersion(const ProtocolVersion &protocol_version);
   void SetRetryPolicy(const RetryPolicy &retryPolicy);
+  void SetCertificate(const Certificates &certificates);
 
   // Used in templated functions
   void SetOption(const Url &url);
@@ -51,6 +53,7 @@ class Session {
   void SetOption(const Body &body);
   void SetOption(const ProtocolVersion &protocol_version);
   void SetOption(const RetryPolicy &retryPolicy);
+  void SetOption(const Certificates &certificates);
   void SetOption(){};
 
   Response Get();
@@ -62,11 +65,13 @@ class Session {
   Parameters parameters_;
   Headers headers_;
   RetryPolicy retryPolicy_;
+  Certificates certificates_;
 
   Response makeRequest(CURL *curl);
   static void freeHolder(CurlHolder *holder);
   static CurlHolder *newHolder();
   static CurlHolder *cloneHolder(CurlHolder *other);
+  static CURLcode ctxFunction(CURL *, void *sslctx, void *parm);
 };
 
 } // namespace curlinho

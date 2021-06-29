@@ -23,10 +23,6 @@ Session::Session() {
     curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
     curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_->error);
     curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
-
-#if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
-    curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
-#endif
 #ifdef CPR_CURL_NOSIGNAL
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 #endif
@@ -63,6 +59,29 @@ CurlHolder *Session::cloneHolder(CurlHolder *other) {
   return holder;
 }
 
+CURLcode Session::ctxFunction(CURL *, void *sslctx, void *parm) {
+  X509_STORE *store;
+  X509 *cert = NULL;
+  BIO *bio;
+  char *mypem = (char*)parm;
+
+  bio = BIO_new_mem_buf(mypem, -1);
+  PEM_read_bio_X509(bio, &cert, 0, NULL);
+  if (cert == NULL) {
+    return CURLE_SSL_CERTPROBLEM;
+  }
+
+  store = SSL_CTX_get_cert_store((SSL_CTX *)sslctx);
+  if (X509_STORE_add_cert(store, cert) == 0) {
+    return CURLE_SSL_CERTPROBLEM;
+  }
+
+  X509_free(cert);
+  BIO_free(bio);
+
+  return CURLE_OK;
+}
+
 void Session::applyDefaults() {
   Defaults &defaults = Defaults::Instance();
   if (defaults.HasUrl()) {
@@ -78,6 +97,32 @@ void Session::applyDefaults() {
   SetHeaders(defaults.headers_);
   SetProtocolVersion(defaults.protocolVersion_);
   SetRetryPolicy(defaults.retryPolicy_);
+  SetCertificate(defaults.certificates_);
+}
+
+void Session::SetCertificate(const Certificates &certificates) {
+  auto curl = curl_->handle;
+  if (curl) {
+    certificates_ = certificates;
+
+    if (certificates_.certType_ == CertType::NATIVE) {
+#if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
+      curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+#endif
+    }
+
+    if (certificates_.certType_ == CertType::PEM) {
+#if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
+      curl_easy_setopt(curl, CURLOPT_SSLCERTTYPE, "PEM");
+      curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, Session::ctxFunction);
+      curl_easy_setopt(curl, CURLOPT_SSL_CTX_DATA, certificates.certString_);
+#endif
+    }
+
+    if (!certificates_.hpkp_.empty()) {
+      curl_easy_setopt(curl, CURLOPT_PINNEDPUBLICKEY, certificates.hpkp_.c_str());
+    }
+  }
 }
 
 void Session::SetUrl(const Url &url) {
@@ -165,6 +210,7 @@ void Session::SetProtocolVersion(const ProtocolVersion &protocol_version) {
       if (curl_version_info(CURLVERSION_NOW)->features & CURL_VERSION_HTTP2) {
         curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
       } else {
+        curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         std::cerr << "No HTTP/2 support" << std::endl;
       }
     }
@@ -260,6 +306,9 @@ void Session::SetOption(const ProtocolVersion &protocolVersion) {
 }
 void Session::SetOption(const RetryPolicy &retryPolicy) {
   SetRetryPolicy(retryPolicy);
+}
+void Session::SetOption(const Certificates &certificates) {
+  SetCertificate(certificates);
 }
 
 } // namespace curlinho

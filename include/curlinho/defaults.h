@@ -6,6 +6,7 @@
 #define CURLINHO_DEFAULTS_H
 
 #include "auth.h"
+#include "certificates.h"
 #include "cprtypes.h"
 #include "parameters.h"
 #include "response.h"
@@ -27,6 +28,7 @@ public:
   void SetAuth(const Authentication &auth);
   void SetProtocolVersion(const ProtocolVersion &protocol_version);
   void SetRetryPolicy(const RetryPolicy &retryPolicy);
+  void SetCertificate(const Certificates &certificates);
 
   bool HasUrl();
   bool HasHeaders();
@@ -40,13 +42,12 @@ public:
   void SetOption(const Authentication &auth);
   void SetOption(const ProtocolVersion &protocolVersion);
   void SetOption(const RetryPolicy &retryPolicy);
-
-  Url url_;
+  void SetOption(const Certificates &certificates);
   Headers headers_;
   Authentication auth_;
-  Timeout timeout_;
   ProtocolVersion protocolVersion_;
   RetryPolicy retryPolicy_;
+  Certificates certificates_;
 
 private:
   Defaults() : timeout_(0), auth_("", ""), protocolVersion_(HTTP::v1x) {};
