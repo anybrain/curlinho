@@ -93,22 +93,11 @@ void Session::applyDefaults() {
   if (defaults.HasTimeout()) {
     SetTimeout(defaults.timeout_);
   }
-  if (defaults.HasHmac()) {
-    SetHmac(defaults.hmac_);
-  }
+
   SetHeaders(defaults.headers_);
   SetProtocolVersion(defaults.protocolVersion_);
   SetRetryPolicy(defaults.retryPolicy_);
   SetCertificate(defaults.certificates_);
-}
-
-void Session::SetHmac(const Hmac &hmac) {
-  hmac_ = hmac;
-}
-
-void Session::PrepareHmac(const std::string &path, const std::string &method, const std::string &body) {
-  hmac_.prepareSignature(path, method, body);
-  SetHeaders(hmac_.getHmacHeaders());
 }
 
 void Session::SetCertificate(const Certificates &certificates) {
@@ -320,9 +309,6 @@ void Session::SetOption(const RetryPolicy &retryPolicy) {
 }
 void Session::SetOption(const Certificates &certificates) {
   SetCertificate(certificates);
-}
-void Session::SetOption(const Hmac &hmac) {
-  SetHmac(hmac);
 }
 
 } // namespace curlinho
