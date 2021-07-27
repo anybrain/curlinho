@@ -32,6 +32,8 @@
    file origins: */
 #define LIBCURL_VERSION "7.78.0-DEV"
 
+#define LIBCURL_CURLINHO
+
 /* The numeric version number is also available "in parts" by using these
    defines: */
 #define LIBCURL_VERSION_MAJOR 7
