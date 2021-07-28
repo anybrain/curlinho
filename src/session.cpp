@@ -16,11 +16,7 @@ Session::Session() {
   if (curl) {
     // Set up some sensible defaults
     auto version_info = curl_version_info(CURLVERSION_NOW);
-#ifdef LIBCURL_CURLINHO
-    auto version = std::string{"curlinho/"} + std::string{version_info->version};
-#else
     auto version = std::string{"curl/"} + std::string{version_info->version};
-#endif
     curl_easy_setopt(curl, CURLOPT_USERAGENT, version.data());
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
@@ -110,6 +106,7 @@ void Session::SetCertificate(const Certificates &certificates) {
     certificates_ = certificates;
 
     auto version_info = curl_version_info(CURLVERSION_NOW);
+    bool hasCurlinho = std::string(version_info->version).find("CURLINHO") != std::string::npos;
     if (version_info->age >= CURLVERSION_EIGHTH) {
 #if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
       curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
@@ -120,11 +117,9 @@ void Session::SetCertificate(const Certificates &certificates) {
       curl_easy_setopt(curl, CURLOPT_SSL_CTX_DATA, certificates.certString_);
     }
 
-#ifdef LIBCURL_CURLINHO
-    if (!certificates_.pkp_.empty()) {
+    if (!certificates_.pkp_.empty() && hasCurlinho) {
       curl_easy_setopt(curl, CURLOPT_PINNEDPUBLICKEY, certificates.pkp_.c_str());
     }
-#endif
   }
 }
 
