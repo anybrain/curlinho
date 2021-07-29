@@ -55,17 +55,24 @@ set_target_properties( ${CURLINHO_LIBRARIES} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
 set_target_properties( ${CURLINHO_LIBRARIES} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CURLINHO_OUTPUT_DIR}/${CURLINHO_PLATFORM}/lib )
 set_target_properties( ${CURLINHO_LIBRARIES} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CURLINHO_OUTPUT_DIR}/${CURLINHO_PLATFORM}/lib )
 set_target_properties( ${CURLINHO_LIBRARIES} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CURLINHO_OUTPUT_DIR}/${CURLINHO_PLATFORM}/lib )
+
 ## include dependencies based on enviornment
 IF (APPLE)
-    find_package(CURL REQUIRED)
+    # find_package(CURL REQUIRED)
     target_link_libraries(${CURLINHO_LIBRARIES}
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcurl.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libz.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
             ${CURL_LIBRARIES})
 
     set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcurl.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libz.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
             CACHE INTERNAL "curlinho lib dirs" FORCE)
 ENDIF()
 
