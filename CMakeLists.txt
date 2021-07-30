@@ -63,7 +63,6 @@ IF (APPLE)
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcurl.a
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libz.a
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
             ${CURL_LIBRARIES})
 
@@ -71,7 +70,6 @@ IF (APPLE)
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcurl.a
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libz.a
             ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
             CACHE INTERNAL "curlinho lib dirs" FORCE)
 ENDIF()
