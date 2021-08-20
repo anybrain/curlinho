@@ -105,22 +105,20 @@ void Session::SetCertificate(const Certificates &certificates) {
   if (curl) {
     certificates_ = certificates;
 
-    if (certificates_.certType_ == CertType::NATIVE) {
+    auto version_info = curl_version_info(CURLVERSION_NOW);
+    bool hasCurlinho = std::string(version_info->version).find("CURLINHO") != std::string::npos;
+    if (version_info->age >= CURLVERSION_EIGHTH) {
 #if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
       curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
 #endif
-    }
-
-    if (certificates_.certType_ == CertType::PEM) {
-#if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
+    } else {
       curl_easy_setopt(curl, CURLOPT_SSLCERTTYPE, "PEM");
       curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, Session::ctxFunction);
       curl_easy_setopt(curl, CURLOPT_SSL_CTX_DATA, certificates.certString_);
-#endif
     }
 
-    if (!certificates_.hpkp_.empty()) {
-      curl_easy_setopt(curl, CURLOPT_PINNEDPUBLICKEY, certificates.hpkp_.c_str());
+    if (!certificates_.pkp_.empty() && hasCurlinho) {
+      curl_easy_setopt(curl, CURLOPT_PINNEDPUBLICKEY, certificates.pkp_.c_str());
     }
   }
 }

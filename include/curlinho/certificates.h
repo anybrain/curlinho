@@ -10,13 +10,10 @@ namespace curlinho {
 class Certificates {
   public:
     Certificates();
-    Certificates(curlinho::CertType type, std::string hpkp);
-    Certificates(CertType type, char* certString);
-    Certificates(CertType type, char* certString, std::string hpkp);
+    Certificates(char* certString, std::string pkp);
 
-    CertType certType_;
     char* certString_;
-    std::string hpkp_;
+    std::string pkp_;
 };
 
 } // namespace cpr
