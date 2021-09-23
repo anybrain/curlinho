@@ -168,12 +168,5 @@ void handleGetRetries(Response res, const std::string &path, Options... ts) {
       std::move(ts)...)
       .detach();
 }
-
-static inline std::string GetHttpVersion() {
-  Session session;
-  session.applyDefaults();
-  return session.GetProtocolVersion();
-}
-
 } // namespace curlinho
 #endif // CURLINHO_CURLINHO_H

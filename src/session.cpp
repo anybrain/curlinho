@@ -207,11 +207,9 @@ void Session::SetProtocolVersion(const ProtocolVersion &protocol_version) {
     if (protocol_version == curlinho::HTTP::v2) {
       if (curl_version_info(CURLVERSION_NOW)->features & CURL_VERSION_HTTP2) {
         curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
-        protocolVersion_ = "HTTP/2.0";
       } else {
         curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         std::cerr << "No HTTP/2 support" << std::endl;
-        protocolVersion_ = "HTTP/1.1";
       }
     }
   }
