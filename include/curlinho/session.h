@@ -56,6 +56,8 @@ class Session {
   void SetOption(const Certificates &certificates);
   void SetOption(){};
 
+  std::string GetProtocolVersion() { return protocolVersion_; }
+
   Response Get();
   Response Post();
 
@@ -66,6 +68,7 @@ class Session {
   Headers headers_;
   RetryPolicy retryPolicy_;
   Certificates certificates_;
+  std::string protocolVersion_;
 
   Response makeRequest(CURL *curl);
   static void freeHolder(CurlHolder *holder);
