@@ -107,15 +107,20 @@ void Session::SetCertificate(const Certificates &certificates) {
 
     auto version_info = curl_version_info(CURLVERSION_NOW);
     bool hasCurlinho = std::string(version_info->version).find("CURLINHO") != std::string::npos;
-    if (version_info->age >= CURLVERSION_EIGHTH) {
+
 #if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
+    if (version_info->age >= CURLVERSION_EIGHTH) {
       curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
-#endif
     } else {
       curl_easy_setopt(curl, CURLOPT_SSLCERTTYPE, "PEM");
       curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, Session::ctxFunction);
       curl_easy_setopt(curl, CURLOPT_SSL_CTX_DATA, certificates.certString_);
     }
+#else
+    curl_easy_setopt(curl, CURLOPT_SSLCERTTYPE, "PEM");
+    curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, Session::ctxFunction);
+    curl_easy_setopt(curl, CURLOPT_SSL_CTX_DATA, certificates.certString_);
+#endif
 
     if (!certificates_.pkp_.empty() && hasCurlinho) {
       curl_easy_setopt(curl, CURLOPT_PINNEDPUBLICKEY, certificates.pkp_.c_str());
