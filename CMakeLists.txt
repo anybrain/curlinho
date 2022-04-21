@@ -49,7 +49,6 @@ set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
         CACHE INTERNAL "curlinho lib dirs" FORCE)
 add_definitions(-DCURL_STATICLIB)
 
-
 ## include dependencies based on enviornment
 IF (APPLE)
     if(CMAKE_SYSTEM_NAME STREQUAL iOS)
@@ -98,16 +97,19 @@ ENDIF()
 
 if(CMAKE_SYSTEM_NAME STREQUAL Android)
     target_link_libraries(${CURLINHO_LIBRARIES}
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcrypto.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libssl.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcurl.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libnghttp2.a)
-
-    set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcrypto.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libssl.a
         ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcurl.a
         ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libnghttp2.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libssl.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcrypto.a
+        ${CURL_LIBRARIES})
+
+        message(STATUS "${CURLINHO_LIBRARIES}")
+
+        set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcurl.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libnghttp2.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libssl.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcrypto.a
         CACHE INTERNAL "curlinho lib dirs" FORCE)
 endif()
 
