@@ -49,11 +49,22 @@ set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
         CACHE INTERNAL "curlinho lib dirs" FORCE)
 add_definitions(-DCURL_STATICLIB)
 
-## include dependencies based on enviornment
-IF (APPLE)
+if(CMAKE_SYSTEM_NAME STREQUAL Android)
+    target_link_libraries(${CURLINHO_LIBRARIES}
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcurl.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libnghttp2.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libssl.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcrypto.a
+        ${CURL_LIBRARIES})
+
+        set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcurl.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libnghttp2.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libssl.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcrypto.a
+        CACHE INTERNAL "curlinho lib dirs" FORCE)
+elseif(APPLE)
     if(CMAKE_SYSTEM_NAME STREQUAL iOS)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fobjc-abi-version=2 -fobjc-arc -std=gnu++11 -stdlib=libc++ -isysroot ${CMAKE_OSX_SYSROOT}")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fobjc-abi-version=2 -fobjc-arc -isysroot ${CMAKE_OSX_SYSROOT}")
         IF (${IS_SIMULATOR})
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mios-simulator-version-min=6.0")
         ENDIF()
@@ -78,7 +89,6 @@ IF (APPLE)
             CACHE INTERNAL "curlinho lib dirs" FORCE)
 
     else()
-        # find_package(CURL REQUIRED)
         target_link_libraries(${CURLINHO_LIBRARIES}
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
@@ -93,32 +103,7 @@ IF (APPLE)
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
                 CACHE INTERNAL "curlinho lib dirs" FORCE)
     endif()
-ENDIF()
-
-if(CMAKE_SYSTEM_NAME STREQUAL Android)
-    target_link_libraries(${CURLINHO_LIBRARIES}
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcurl.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libnghttp2.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libssl.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcrypto.a
-        ${CURL_LIBRARIES})
-
-        message(STATUS "${CURLINHO_LIBRARIES}")
-
-        set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcurl.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libnghttp2.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libssl.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcrypto.a
-        CACHE INTERNAL "curlinho lib dirs" FORCE)
-endif()
-
-IF (UNIX AND NOT APPLE)
-    add_definitions(-D_LARGEFILE64_SOURCE)
-    target_link_libraries (${CURLINHO_LIBRARIES} curl)
-ENDIF ()
-
-IF (MSVC)
+elseif(MSVC)
     if(BUILD_STATIC_LIB)
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /D_ITERATOR_DEBUG_LEVEL=2")
         if(BUILD_RELEASE_DEBUG)
@@ -175,7 +160,10 @@ IF (MSVC)
         set(CURLINHO_BINARY_DIRS ${CURLINHO_BINARY_DIRS}
                 CACHE INTERNAL "curlinho binary dirs" FORCE)
     endif()
-ENDIF()
+elseif(UNIX AND NOT APPLE)
+    add_definitions(-D_LARGEFILE64_SOURCE)
+    target_link_libraries (${CURLINHO_LIBRARIES} curl)
+endif()
 
 ## Library installation directory.
 if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
