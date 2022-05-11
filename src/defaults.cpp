@@ -24,7 +24,9 @@ void Defaults::SetProtocolVersion(const ProtocolVersion &protocolVersion) {
 void Defaults::SetRetryPolicy(const RetryPolicy &retryPolicy) {
   retryPolicy_ = retryPolicy;
 }
-void Defaults::SetCertificate(const Certificates &certificates) { certificates_ = certificates; }
+void Defaults::SetSslCert(const SslCert &sslcert) {
+  sslcert_ = sslcert;
+}
 
 void Defaults::SetOption(const Url &url) {
   Defaults::SetUrl(url);
@@ -44,8 +46,8 @@ void Defaults::SetOption(const ProtocolVersion &protocolVersion) {
 void Defaults::SetOption(const RetryPolicy &retryPolicy) {
   Defaults::SetRetryPolicy(retryPolicy);
 }
-void Defaults::SetOption(const Certificates &certificates) {
-  Defaults::SetCertificate(certificates);
+void Defaults::SetOption(const SslCert &sslcert) {
+  Defaults::SetSslCert(sslcert);
 }
 
 bool Defaults::HasUrl() {
