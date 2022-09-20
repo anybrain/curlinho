@@ -4,7 +4,6 @@ set(CMAKE_CXX_STANDARD 11)
 
 ###### Options you can change! ##################
 option(BUILD_STATIC_LIB "Build static lib" OFF)
-option(BUILD_RELEASE_DEBUG "Build release with debug info" OFF)
 option(BUILD_EXAMPLES "Build Examples" OFF)
 option(BUILD_TESTS "Build Tests" OFF)
 #################################################
@@ -65,9 +64,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL Android)
         CACHE INTERNAL "curlinho lib dirs" FORCE)
 elseif(APPLE)
     if(CMAKE_SYSTEM_NAME STREQUAL iOS)
-        IF (${IS_SIMULATOR})
+        if(${IS_SIMULATOR})
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mios-simulator-version-min=6.0")
-        ENDIF()
+        endif()
 
         find_library(CORE_MOTION CoreMotion)
         find_library(CORE_MOTION CoreMotion)
@@ -106,19 +105,13 @@ elseif(APPLE)
 elseif(MSVC)
     if(BUILD_STATIC_LIB)
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /D_ITERATOR_DEBUG_LEVEL=2")
-        if(BUILD_RELEASE_DEBUG)
-            set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MTd /D_ITERATOR_DEBUG_LEVEL=2")
-        else()
-            set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /D_ITERATOR_DEBUG_LEVEL=0")
-        endif()
+        set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELEASE} /MTd /D_ITERATOR_DEBUG_LEVEL=2")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /D_ITERATOR_DEBUG_LEVEL=0")
         message(STATUS "Building curlinho with MT flag")
     else()
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd /D_ITERATOR_DEBUG_LEVEL=2")
-        if(BUILD_RELEASE_DEBUG)
-            set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MDd /D_ITERATOR_DEBUG_LEVEL=2")
-        else()
-            set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD /D_ITERATOR_DEBUG_LEVEL=0")
-        endif()
+        set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELEASE} /MDd /D_ITERATOR_DEBUG_LEVEL=2")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD /D_ITERATOR_DEBUG_LEVEL=0")
         message(STATUS "Building curlinho with MD flag")
     endif()
 
@@ -142,7 +135,6 @@ elseif(MSVC)
         set(CURLINHO_BINARY_DIRS ${CURLINHO_BINARY_DIRS}
                 CACHE INTERNAL "curlinho binary dirs" FORCE)
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
-		message(STATUS "Using 64bit curl libs")
         target_link_libraries(${CURLINHO_LIBRARIES}
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/libcurl.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/nghttp2.lib
@@ -183,13 +175,6 @@ install(
         RUNTIME DESTINATION "bin"
 )
 
-####### BUILD TESTS ##########
-if(BUILD_TESTS)
-    #TODO: Add tests
-    #add_subdirectory(test)
-endif(BUILD_TESTS)
-
-####### BUILD EXAMPLES #######
 if(BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif(BUILD_EXAMPLES)
