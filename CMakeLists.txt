@@ -4,7 +4,6 @@ set(CMAKE_CXX_STANDARD 11)
 
 ###### Options you can change! ##################
 option(BUILD_STATIC_LIB "Build static lib" OFF)
-option(BUILD_RELEASE_DEBUG "Build release with debug info" OFF)
 option(BUILD_EXAMPLES "Build Examples" OFF)
 option(BUILD_TESTS "Build Tests" OFF)
 #################################################
@@ -45,56 +44,74 @@ include_directories(${CURLINHO_INCLUDE_DIRS})
 message(STATUS "Building curlinho static lib")
 add_library(${CURLINHO_LIBRARIES} STATIC ${SOURCE_FILES})
 set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
-        ${CURLINHO_OUTPUT_DIR}/${CURLINHO_PLATFORM}/lib/$<TARGET_LINKER_FILE_NAME:${CURLINHO_LIBRARIES}>
+        ${CURLINHO_OUTPUT_DIR}/lib/$<TARGET_LINKER_FILE_NAME:${CURLINHO_LIBRARIES}>
         CACHE INTERNAL "curlinho lib dirs" FORCE)
 add_definitions(-DCURL_STATICLIB)
 
-set_target_properties( ${CURLINHO_LIBRARIES} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CURLINHO_OUTPUT_DIR}/${CURLINHO_PLATFORM}/bin )
-set_target_properties( ${CURLINHO_LIBRARIES} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CURLINHO_OUTPUT_DIR}/${CURLINHO_PLATFORM}/bin )
-set_target_properties( ${CURLINHO_LIBRARIES} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CURLINHO_OUTPUT_DIR}/${CURLINHO_PLATFORM}/bin )
-set_target_properties( ${CURLINHO_LIBRARIES} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CURLINHO_OUTPUT_DIR}/${CURLINHO_PLATFORM}/lib )
-set_target_properties( ${CURLINHO_LIBRARIES} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CURLINHO_OUTPUT_DIR}/${CURLINHO_PLATFORM}/lib )
-set_target_properties( ${CURLINHO_LIBRARIES} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CURLINHO_OUTPUT_DIR}/${CURLINHO_PLATFORM}/lib )
-
-## include dependencies based on enviornment
-IF (APPLE)
-    # find_package(CURL REQUIRED)
+if(CMAKE_SYSTEM_NAME STREQUAL Android)
     target_link_libraries(${CURLINHO_LIBRARIES}
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcurl.a
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
-            ${CURL_LIBRARIES})
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcurl.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libnghttp2.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libssl.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcrypto.a
+        ${CURL_LIBRARIES})
 
-    set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcurl.a
-            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
+        set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcurl.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libnghttp2.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libssl.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/ANDROID/${ANDROID_ABI}/libcrypto.a
+        CACHE INTERNAL "curlinho lib dirs" FORCE)
+elseif(APPLE)
+    if(CMAKE_SYSTEM_NAME STREQUAL iOS)
+        if(${IS_SIMULATOR})
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mios-simulator-version-min=6.0")
+        endif()
+
+        find_library(CORE_MOTION CoreMotion)
+        find_library(CORE_MOTION CoreMotion)
+        find_library(UI_KIT UIKit)
+        target_link_libraries(${CURLINHO_LIBRARIES}
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/IOS/${PLATFORM}/libcrypto.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/IOS/${PLATFORM}/libssl.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/IOS/${PLATFORM}/libcurl.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/IOS/${PLATFORM}/libnghttp2.a
+            z # libz
+            ${UI_KIT} ${CORE_MOTION})
+
+        set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/IOS/${PLATFORM}/libcrypto.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/IOS/${PLATFORM}/libssl.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/IOS/${PLATFORM}/libcurl.a
+            ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/IOS/${PLATFORM}/libnghttp2.a
+            ${UI_KIT} ${CORE_MOTION}
             CACHE INTERNAL "curlinho lib dirs" FORCE)
-ENDIF()
 
-IF (UNIX AND NOT APPLE)
-    add_definitions(-D_LARGEFILE64_SOURCE)
-    target_link_libraries (${CURLINHO_LIBRARIES} curl)
-ENDIF ()
+    else()
+        target_link_libraries(${CURLINHO_LIBRARIES}
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcurl.a
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
+                ${CURL_LIBRARIES})
 
-IF (MSVC)
+        set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcurl.a
+                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
+                CACHE INTERNAL "curlinho lib dirs" FORCE)
+    endif()
+elseif(MSVC)
     if(BUILD_STATIC_LIB)
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /D_ITERATOR_DEBUG_LEVEL=2")
-        if(BUILD_RELEASE_DEBUG)
-            set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MTd /D_ITERATOR_DEBUG_LEVEL=2")
-        else()
-            set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /D_ITERATOR_DEBUG_LEVEL=0")
-        endif()
+        set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELEASE} /MTd /D_ITERATOR_DEBUG_LEVEL=2")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /D_ITERATOR_DEBUG_LEVEL=0")
         message(STATUS "Building curlinho with MT flag")
     else()
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd /D_ITERATOR_DEBUG_LEVEL=2")
-        if(BUILD_RELEASE_DEBUG)
-            set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MDd /D_ITERATOR_DEBUG_LEVEL=2")
-        else()
-            set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD /D_ITERATOR_DEBUG_LEVEL=0")
-        endif()
+        set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELEASE} /MDd /D_ITERATOR_DEBUG_LEVEL=2")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD /D_ITERATOR_DEBUG_LEVEL=0")
         message(STATUS "Building curlinho with MD flag")
     endif()
 
@@ -118,7 +135,6 @@ IF (MSVC)
         set(CURLINHO_BINARY_DIRS ${CURLINHO_BINARY_DIRS}
                 CACHE INTERNAL "curlinho binary dirs" FORCE)
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
-		message(STATUS "Using 64bit curl libs")
         target_link_libraries(${CURLINHO_LIBRARIES}
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/libcurl.lib
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/MSVC/x64/nghttp2.lib
@@ -136,7 +152,10 @@ IF (MSVC)
         set(CURLINHO_BINARY_DIRS ${CURLINHO_BINARY_DIRS}
                 CACHE INTERNAL "curlinho binary dirs" FORCE)
     endif()
-ENDIF()
+elseif(UNIX AND NOT APPLE)
+    add_definitions(-D_LARGEFILE64_SOURCE)
+    target_link_libraries (${CURLINHO_LIBRARIES} curl)
+endif()
 
 ## Library installation directory.
 if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
@@ -156,13 +175,6 @@ install(
         RUNTIME DESTINATION "bin"
 )
 
-####### BUILD TESTS ##########
-if(BUILD_TESTS)
-    #TODO: Add tests
-    #add_subdirectory(test)
-endif(BUILD_TESTS)
-
-####### BUILD EXAMPLES #######
 if(BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif(BUILD_EXAMPLES)
