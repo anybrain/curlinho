@@ -97,34 +97,26 @@ void Session::applyDefaults() {
   SetHeaders(defaults.headers_);
   SetProtocolVersion(defaults.protocolVersion_);
   SetRetryPolicy(defaults.retryPolicy_);
-  SetCertificate(defaults.certificates_);
+  SetSslCert(defaults.sslcert_);
 }
 
-void Session::SetCertificate(const Certificates &certificates) {
-  auto curl = curl_->handle;
-  if (curl) {
-    certificates_ = certificates;
-
-    auto version_info = curl_version_info(CURLVERSION_NOW);
-    bool hasCurlinho = std::string(version_info->version).find("CURLINHO") != std::string::npos;
-
+void Session::SetSslCert(const SslCert &sslcert) {
 #if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
-    if (version_info->age >= CURLVERSION_EIGHTH) {
-      curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
-    } else {
-      curl_easy_setopt(curl, CURLOPT_SSLCERTTYPE, "PEM");
-      curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, Session::ctxFunction);
-      curl_easy_setopt(curl, CURLOPT_SSL_CTX_DATA, certificates.certString_);
-    }
-#else
-    curl_easy_setopt(curl, CURLOPT_SSLCERTTYPE, "PEM");
-    curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, Session::ctxFunction);
-    curl_easy_setopt(curl, CURLOPT_SSL_CTX_DATA, certificates.certString_);
+#if LIBCURL_VERSION_MAJOR >= 7
+#if LIBCURL_VERSION_MINOR >= 71
+  curl_easy_setopt(curl_->handle, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+#endif
+#endif
 #endif
 
-    if (!certificates_.pkp_.empty() && hasCurlinho) {
-      curl_easy_setopt(curl, CURLOPT_PINNEDPUBLICKEY, certificates.pkp_.c_str());
-    }
+  if (!sslcert.certString_.empty()) {
+    curl_easy_setopt(curl_->handle, CURLOPT_SSLCERTTYPE, "PEM");
+    curl_easy_setopt(curl_->handle, CURLOPT_SSL_CTX_FUNCTION, Session::ctxFunction);
+    curl_easy_setopt(curl_->handle, CURLOPT_SSL_CTX_DATA, sslcert.certString_.c_str());
+  }
+
+  if (!sslcert.pkp_.empty()) {
+    curl_easy_setopt(curl_->handle, CURLOPT_PINNEDPUBLICKEY, sslcert.pkp_.c_str());
   }
 }
 
@@ -154,7 +146,7 @@ void Session::SetHeaders(const Headers &headers) {
     struct curl_slist *chunk = nullptr;
     for (const auto &header : headers_) {
       auto header_string = std::string{header.first};
-       if (header.second.empty()) {
+      if (header.second.empty()) {
         header_string += ";";
       } else {
         header_string += ": " + header.second;
@@ -312,8 +304,8 @@ void Session::SetOption(const ProtocolVersion &protocolVersion) {
 void Session::SetOption(const RetryPolicy &retryPolicy) {
   SetRetryPolicy(retryPolicy);
 }
-void Session::SetOption(const Certificates &certificates) {
-  SetCertificate(certificates);
+void Session::SetOption(const SslCert &sslcert) {
+  SetSslCert(sslcert);
 }
 
 } // namespace curlinho

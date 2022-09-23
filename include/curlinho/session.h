@@ -12,7 +12,7 @@
 #include "curlinho/parameters.h"
 #include "curlinho/response.h"
 #include "curlinho/util.h"
-#include "curlinho/certificates.h"
+#include "curlinho/sslcert.h"
 
 namespace curlinho {
 
@@ -40,7 +40,7 @@ class Session {
   void SetBody(const Body &body);
   void SetProtocolVersion(const ProtocolVersion &protocol_version);
   void SetRetryPolicy(const RetryPolicy &retryPolicy);
-  void SetCertificate(const Certificates &certificates);
+  void SetSslCert(const SslCert &sslcert);
 
   // Used in templated functions
   void SetOption(const Url &url);
@@ -53,7 +53,7 @@ class Session {
   void SetOption(const Body &body);
   void SetOption(const ProtocolVersion &protocol_version);
   void SetOption(const RetryPolicy &retryPolicy);
-  void SetOption(const Certificates &certificates);
+  void SetOption(const SslCert &sslcert);
   void SetOption(){};
 
   std::string GetProtocolVersion() { return protocolVersion_; }
@@ -67,7 +67,7 @@ class Session {
   Parameters parameters_;
   Headers headers_;
   RetryPolicy retryPolicy_;
-  Certificates certificates_;
+  SslCert sslcert_;
   std::string protocolVersion_;
 
   Response makeRequest(CURL *curl);

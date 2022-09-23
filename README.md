@@ -1,6 +1,6 @@
 # Curlinho
 A minimalist wrapper around Curl, with compatibility with recent features like HTTP/2 protocol.
-This project is based on the design of [C++ Requests](https://whoshuu.github.io/cpr) (Curl for People) project.
+This project is based on the design of [C++ Requests](https://github.com/libcpr/cpr) (Curl for People) project.
 
 This project is compatible with macOS and Windows (MSVC).
 
