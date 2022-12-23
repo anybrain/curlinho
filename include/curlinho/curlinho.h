@@ -120,7 +120,7 @@ void handlePostRetries(Response res, const std::string &path, const Body &body, 
         curlinho::Response r = res;
         auto retries = Defaults::Instance().retryPolicy_;
         for (int retry = 0; retry < retries.nr_retries; retry++) {
-          int timer = (std::pow(2, retry) * util::randomNumberRange(retries.minDelay, retries.maxDelay));
+          int timer = (int)(std::pow(2, retry) * util::randomNumberRange(retries.minDelay, retries.maxDelay));
           if(timer > retries.maxBackOff) {
             timer = retries.maxBackOff;
           }
