@@ -8,6 +8,7 @@
 #include "curl/curl.h"
 #include "curlinho/defaults.h"
 #include "curlinho/session.h"
+#include "curlinho/util.h"
 
 #include <functional>
 #include <future>
@@ -118,7 +119,11 @@ void handlePostRetries(Response res, const std::string &path, const Body &body, 
   std::thread([res, path, body](Options... ts) {
         curlinho::Response r = res;
         auto retries = Defaults::Instance().retryPolicy_;
-        for (auto timer : retries.delays_) {
+        for (int retry = 0; retry < retries.nr_retries; retry++) {
+          int timer = (std::pow(2, retry) * util::randomNumberRange(retries.minDelay, retries.maxDelay));
+          if(timer > retries.maxBackOff) {
+            timer = retries.maxBackOff;
+          }
           if (r.status_code != 200 || r.error.code != CURLE_OK) {
             if (r.error.code == CURLE_OPERATION_TIMEOUTED) {
               CRL_LOG << "Request timed out, Another retry!" << std::endl;
@@ -146,7 +151,11 @@ void handleGetRetries(Response res, const std::string &path, Options... ts) {
   std::thread([res, path](Options... ts) {
         curlinho::Response r = res;
         auto retries = Defaults::Instance().retryPolicy_;
-        for (auto timer : retries.delays_) {
+        for (int retry = 0; retry < retries.nr_retries; retry++) {
+          int timer = (std::pow(2, retry) * util::randomNumberRange(retries.minDelay, retries.maxDelay));
+          if(timer > retries.maxBackOff) {
+            timer = retries.maxBackOff;
+          }
           if (r.status_code != 200 || r.error.code != CURLE_OK) {
             if (r.error.code == CURLE_OPERATION_TIMEOUTED) {
               CRL_LOG << "Request timed out, Another retry!" << std::endl;
