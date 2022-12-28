@@ -116,12 +116,16 @@ void PostDetach(const std::string &path, const Body &body, Options... ts) {
 
 template <typename... Options>
 void handlePostRetries(Response res, const std::string &path, const Body &body, Options... ts) {
-  std::thread([res, path, body](Options... ts) {
+  std::thread(
+      [res, path, body](Options... ts) {
+        Session session(path, body);
+        priv::set_option(session, CRL_FWD(ts)...);
+        auto retries = session.GetRetryPolicy();
         curlinho::Response r = res;
-        auto retries = Defaults::Instance().retryPolicy_;
-        for (int retry = 0; retry < retries.nr_retries; retry++) {
-          int timer = (int)(std::pow(2, retry) * util::randomNumberRange(retries.minDelay, retries.maxDelay));
-          if(timer > retries.maxBackOff) {
+        for (int retry = 0; retry < retries.numRetries; retry++) {
+          int timer = (int)(std::pow(2, retry) *
+                            util::randomNumberRange(retries.minDelay, retries.maxDelay));
+          if (timer > retries.maxBackOff) {
             timer = retries.maxBackOff;
           }
           if (r.status_code != 200 || r.error.code != CURLE_OK) {
@@ -130,15 +134,13 @@ void handlePostRetries(Response res, const std::string &path, const Body &body, 
               CRL_SLEEP(timer);
             } else if (std::find(retries.recoverableCodes_.begin(), retries.recoverableCodes_.end(),
                                  r.status_code) == retries.recoverableCodes_.end()) {
-              CRL_LOG << "Error was not recoverable, no need to retry! - " << r.status_code
-                      << std::endl;
+              CRL_LOG << "Error was not recoverable, no need to retry! - " << r.status_code;
               break;
             } else {
-              CRL_LOG << "Request failed, retry in " << timer << " seconds. - " << r.status_code
-                      << std::endl;
+              CRL_LOG << "Request failed, retry in " << timer << " seconds. - " << r.status_code;
               CRL_SLEEP(timer);
             }
-            r = PostIntern(path, body, std::move(ts)...);
+            r = session.Post();
           }
         }
       },
@@ -148,12 +150,16 @@ void handlePostRetries(Response res, const std::string &path, const Body &body, 
 
 template <typename... Options>
 void handleGetRetries(Response res, const std::string &path, Options... ts) {
-  std::thread([res, path](Options... ts) {
+  std::thread(
+      [res, path](Options... ts) {
+        Session session(path, "");
+        priv::set_option(session, CRL_FWD(ts)...);
+        auto retries = session.GetRetryPolicy();
         curlinho::Response r = res;
-        auto retries = Defaults::Instance().retryPolicy_;
-        for (int retry = 0; retry < retries.nr_retries; retry++) {
-          int timer = (std::pow(2, retry) * util::randomNumberRange(retries.minDelay, retries.maxDelay));
-          if(timer > retries.maxBackOff) {
+        for (int retry = 0; retry < retries.numRetries; retry++) {
+          int timer = (int)(std::pow(2, retry) *
+                            util::randomNumberRange(retries.minDelay, retries.maxDelay));
+          if (timer > retries.maxBackOff) {
             timer = retries.maxBackOff;
           }
           if (r.status_code != 200 || r.error.code != CURLE_OK) {
@@ -162,15 +168,13 @@ void handleGetRetries(Response res, const std::string &path, Options... ts) {
               CRL_SLEEP(timer);
             } else if (std::find(retries.recoverableCodes_.begin(), retries.recoverableCodes_.end(),
                                  r.status_code) == retries.recoverableCodes_.end()) {
-              CRL_LOG << "Error was not recoverable, no need to retry! - " << r.status_code
-                      << std::endl;
+              CRL_LOG << "Error was not recoverable, no need to retry! - " << r.status_code;
               break;
             } else {
-              CRL_LOG << "Request failed, retry in " << timer << " seconds. - " << r.status_code
-                      << std::endl;
+              CRL_LOG << "Request failed, retry in " << timer << " seconds. - " << r.status_code;
               CRL_SLEEP(timer);
             }
-            r = GetIntern(path, std::move(ts)...);
+            r = session.Get();
           }
         }
       },

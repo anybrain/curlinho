@@ -36,6 +36,40 @@ Session::Session() {
   }
 }
 
+Session::Session(const std::string &path, const Body &body) {
+  curl_ = std::unique_ptr<CurlHolder, std::function<void(CurlHolder *)>>(newHolder(), &freeHolder);
+  auto curl = curl_->handle;
+  if (curl) {
+    // Set up some sensible defaults
+    auto version_info = curl_version_info(CURLVERSION_NOW);
+    auto version = std::string{"curl/"} + std::string{version_info->version};
+    curl_easy_setopt(curl, CURLOPT_USERAGENT, version.data());
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
+    curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_->error);
+    curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+#ifdef CPR_CURL_NOSIGNAL
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
+#endif
+#if LIBCURL_VERSION_MAJOR >= 7
+#if LIBCURL_VERSION_MINOR >= 25
+#if LIBCURL_VERSION_PATCH >= 0
+    curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
+#endif
+#endif
+#endif
+  }
+
+  applyDefaults();
+  if (!path.empty()) {
+    AppendUrl(path);
+  }
+  if (!body.empty()) {
+    SetBody(body);
+  }
+}
+
 void Session::freeHolder(CurlHolder *holder) {
   curl_easy_cleanup(holder->handle);
   curl_slist_free_all(holder->chunk);
@@ -306,6 +340,10 @@ void Session::SetOption(const RetryPolicy &retryPolicy) {
 }
 void Session::SetOption(const SslCert &sslcert) {
   SetSslCert(sslcert);
+}
+
+RetryPolicy Session::GetRetryPolicy() {
+  return retryPolicy_;
 }
 
 } // namespace curlinho
