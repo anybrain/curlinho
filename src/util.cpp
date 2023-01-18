@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <random>
 
 namespace curlinho {
 
@@ -89,6 +90,13 @@ std::string urlEncode(const std::string& value) {
     }
 
     return escaped.str();
+}
+
+int randomNumberRange(int low, int high) {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> dist(low, high);
+  return dist(gen);
 }
 
 } // namespace util

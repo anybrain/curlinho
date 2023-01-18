@@ -11,8 +11,11 @@ int main() {
   using namespace curlinho;
 
   RetryPolicy retries;
-  retries.nr_retries = 3;
-  retries.delays_= {1,1,2};
+  retries.numRetries = 3;
+  retries.minDelay = 5;
+  retries.maxDelay = 10;
+  retries.maxBackOff = 40;
+
   curlinho::SetDefaults(
           Url{"https://httpstat.us/"},
           Headers{

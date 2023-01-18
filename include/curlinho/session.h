@@ -26,6 +26,7 @@ struct CurlHolder {
 class Session {
   public:
   Session();
+  Session(const std::string &path, const Body &body);
   ~Session() = default;
 
   void applyDefaults();
@@ -55,6 +56,8 @@ class Session {
   void SetOption(const RetryPolicy &retryPolicy);
   void SetOption(const SslCert &sslcert);
   void SetOption(){};
+
+  RetryPolicy GetRetryPolicy();
 
   std::string GetProtocolVersion() { return protocolVersion_; }
 

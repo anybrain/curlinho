@@ -16,8 +16,10 @@ using Url = std::string;
 using ProtocolVersion = enum class HTTP { v1x, v2 };
 
 struct RetryPolicy {
-  int nr_retries=0;
-  std::vector<int> delays_{};
+  int numRetries = 0;
+  int minDelay = 0;
+  int maxDelay = 0;
+  int maxBackOff = 0;
   std::vector<int> recoverableCodes_{408, 425, 429, 502, 503, 504, 522, 524};
 };
 
