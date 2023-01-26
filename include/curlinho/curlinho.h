@@ -13,6 +13,7 @@
 #include <functional>
 #include <future>
 #include <string>
+#include <cmath>
 
 namespace curlinho {
 
@@ -152,7 +153,7 @@ template <typename... Options>
 void handleGetRetries(Response res, const std::string &path, Options... ts) {
   std::thread(
       [res, path](Options... ts) {
-        Session session(path, "");
+        Session session(path, curlinho::Body{});
         priv::set_option(session, CRL_FWD(ts)...);
         auto retries = session.GetRetryPolicy();
         curlinho::Response r = res;
