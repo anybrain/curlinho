@@ -8,7 +8,6 @@
 #include "curlinho/auth.h"
 #include "curlinho/body.h"
 #include "curlinho/cprtypes.h"
-#include "curlinho/defaults.h"
 #include "curlinho/parameters.h"
 #include "curlinho/response.h"
 #include "curlinho/util.h"
@@ -26,11 +25,9 @@ struct CurlHolder {
 class Session {
   public:
   Session();
-  Session(const std::string &path, const Body &body);
+  Session(const std::string &url, const Body &body);
   ~Session() = default;
 
-  void applyDefaults();
-  void AppendUrl(const Url &url);
   void SetUrl(const Url &url);
   void SetParameters(const Parameters &parameters);
   void SetParameters(Parameters &&parameters);
