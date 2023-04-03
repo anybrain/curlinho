@@ -56,7 +56,8 @@ class Session {
 
   RetryPolicy GetRetryPolicy();
 
-  std::string GetProtocolVersion() { return protocolVersion_; }
+  std::string GetHtppLastProtocolVersion();
+  std::string GetHttpLastProtocolVersion() { return protocolVersion_; }
 
   Response Get();
   Response Post();

@@ -164,9 +164,9 @@ void handleGetRetries(Response res, const std::string &url, Options... ts) {
       .detach();
 }
 
-static inline std::string GetHttpVersion() {
+static inline std::string GetHttpLastVersion() {
   Session session;
-  return session.GetProtocolVersion();
+  return session.GetHttpLastProtocolVersion();
 }
 
 } // namespace curlinho

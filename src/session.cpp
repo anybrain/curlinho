@@ -285,6 +285,19 @@ Response Session::makeRequest(CURL *curl) {
                   Error(curl_error, curl_->error)};
 }
 
+std::string Session::GetHttpLastProtocolVersion() {
+#if LIBCURL_VERSION_MAJOR >= 7
+#if LIBCURL_VERSION_MINOR >= 33
+#if LIBCURL_VERSION_PATCH >= 0
+  if (curl_version_info(CURLVERSION_NOW)->features & CURL_VERSION_HTTP2) {
+    return "HTTP/2.0";
+  }
+  return "HTTP/1.1";
+#endif
+#endif
+#endif
+}
+
 void Session::SetOption(const Url &url) {
   SetUrl(url);
 }
