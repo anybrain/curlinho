@@ -6,7 +6,6 @@
 #define CURLINHO_CURLINHO_H
 
 #include "curl/curl.h"
-#include "curlinho/defaults.h"
 #include "curlinho/session.h"
 #include "curlinho/util.h"
 
@@ -34,67 +33,49 @@ inline void set_option(Session &session, Option &&t, Options &&... ts) {
   set_option(session, CRL_FWD(ts)...);
 }
 
-inline void set_default() {}
-template <typename Option>
-inline void set_default(Option &&t) {
-  Defaults::Instance().SetOption(CRL_FWD(t));
-}
-template <typename Option, typename... Options>
-inline void set_default(Option &&t, Options &&... ts) {
-  set_default(CRL_FWD(t));
-  set_default(CRL_FWD(ts)...);
-}
-
 } // namespace priv
-
-template <typename... Options>
-void SetDefaults(Options &&... ts) {
-  priv::set_default(CRL_FWD(ts)...);
-}
 
 // Get methods
 template <typename... Options>
-Response GetIntern(const std::string &path, Options &&... ts) {
+Response GetIntern(const std::string &url, Options &&... ts) {
   Session session;
-  session.applyDefaults();
   priv::set_option(session, CRL_FWD(ts)...);
-  if (!path.empty()) {
-    session.AppendUrl(path);
+  if (!url.empty()) {
+    session.SetUrl(url);
   }
   return session.Get();
 }
 
 template <typename... Options>
-Response Get(const std::string &path, Options &&... ts) {
-  Response res = GetIntern(path, std::move(ts)...);
-  handleGetRetries(res, path, std::move(ts)...);
+Response Get(const std::string &url, Options &&... ts) {
+  Response res = GetIntern(url, std::move(ts)...);
+  handleGetRetries(res, url, std::move(ts)...);
   return res;
 }
 
 // Get async methods
 template <typename... Options>
-AsyncResponse GetAsync(const std::string &path, Options... ts) {
+AsyncResponse GetAsync(const std::string &url, Options... ts) {
   return std::async(
-      std::launch::async, [path](Options... ts) { return Get(path, std::move(ts)...); },
+      std::launch::async, [url](Options... ts) { return Get(url, std::move(ts)...); },
       std::move(ts)...);
 }
 
 // Post methods
 template <typename... Options>
-Response Post(const std::string &path, const Body &body, Options &&... ts) {
-  Response res = PostIntern(path, body, CRL_FWD(ts)...);
-  handlePostRetries(res, path, body, CRL_FWD(ts)...);
+Response Post(const std::string &url, const Body &body, Options &&... ts) {
+  Response res = PostIntern(url, body, CRL_FWD(ts)...);
+  handlePostRetries(res, url, body, CRL_FWD(ts)...);
   return res;
 }
 
 // Post methods
 template <typename... Options>
-Response PostIntern(const std::string &path, const Body &body, Options &&... ts) {
+Response PostIntern(const std::string &url, const Body &body, Options &&... ts) {
   Session session;
-  session.applyDefaults();
   priv::set_option(session, CRL_FWD(ts)...);
-  if (!path.empty()) {
-    session.AppendUrl(path);
+  if (!url.empty()) {
+    session.SetUrl(url);
   }
   session.SetBody(body);
   return session.Post();
@@ -102,24 +83,24 @@ Response PostIntern(const std::string &path, const Body &body, Options &&... ts)
 
 // Post async methods
 template <typename... Options>
-AsyncResponse PostAsync(const std::string &path, const Body &body, Options... ts) {
+AsyncResponse PostAsync(const std::string &url, const Body &body, Options... ts) {
   return std::async(
       std::launch::async,
-      [path, body](Options... ts) { return Post(path, body, std::move(ts)...); }, std::move(ts)...);
+      [url, body](Options... ts) { return Post(url, body, std::move(ts)...); }, std::move(ts)...);
 }
 
 // Post detach
 template <typename... Options>
-void PostDetach(const std::string &path, const Body &body, Options... ts) {
-  std::thread([path, body](Options... ts) { Post(path, body, std::move(ts)...); }, std::move(ts)...)
+void PostDetach(const std::string &url, const Body &body, Options... ts) {
+  std::thread([url, body](Options... ts) { Post(url, body, std::move(ts)...); }, std::move(ts)...)
       .detach();
 }
 
 template <typename... Options>
-void handlePostRetries(Response res, const std::string &path, const Body &body, Options... ts) {
+void handlePostRetries(Response res, const std::string &url, const Body &body, Options... ts) {
   std::thread(
-      [res, path, body](Options... ts) {
-        Session session(path, body);
+      [res, url, body](Options... ts) {
+        Session session(url, body);
         priv::set_option(session, CRL_FWD(ts)...);
         auto retries = session.GetRetryPolicy();
         curlinho::Response r = res;
@@ -150,10 +131,10 @@ void handlePostRetries(Response res, const std::string &path, const Body &body, 
 }
 
 template <typename... Options>
-void handleGetRetries(Response res, const std::string &path, Options... ts) {
+void handleGetRetries(Response res, const std::string &url, Options... ts) {
   std::thread(
-      [res, path](Options... ts) {
-        Session session(path, curlinho::Body{});
+      [res, url](Options... ts) {
+        Session session(url, curlinho::Body{});
         priv::set_option(session, CRL_FWD(ts)...);
         auto retries = session.GetRetryPolicy();
         curlinho::Response r = res;
@@ -183,10 +164,9 @@ void handleGetRetries(Response res, const std::string &path, Options... ts) {
       .detach();
 }
 
-static inline std::string GetHttpVersion() {
+static inline std::string GetHttpLastVersion() {
   Session session;
-  session.applyDefaults();
-  return session.GetProtocolVersion();
+  return session.GetHttpLastProtocolVersion();
 }
 
 } // namespace curlinho

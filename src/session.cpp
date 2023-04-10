@@ -36,7 +36,7 @@ Session::Session() {
   }
 }
 
-Session::Session(const std::string &path, const Body &body) {
+Session::Session(const std::string &url, const Body &body) {
   curl_ = std::unique_ptr<CurlHolder, std::function<void(CurlHolder *)>>(newHolder(), &freeHolder);
   auto curl = curl_->handle;
   if (curl) {
@@ -61,9 +61,8 @@ Session::Session(const std::string &path, const Body &body) {
 #endif
   }
 
-  applyDefaults();
-  if (!path.empty()) {
-    AppendUrl(path);
+  if (!url.empty()) {
+    SetUrl(url);
   }
   if (!body.empty()) {
     SetBody(body);
@@ -116,24 +115,6 @@ CURLcode Session::ctxFunction(CURL *, void *sslctx, void *parm) {
   return CURLE_OK;
 }
 
-void Session::applyDefaults() {
-  Defaults &defaults = Defaults::Instance();
-  if (defaults.HasUrl()) {
-    SetUrl(defaults.url_);
-  }
-  if (defaults.HasAuth()) {
-    SetAuth(defaults.auth_);
-  }
-  if (defaults.HasTimeout()) {
-    SetTimeout(defaults.timeout_);
-  }
-
-  SetHeaders(defaults.headers_);
-  SetProtocolVersion(defaults.protocolVersion_);
-  SetRetryPolicy(defaults.retryPolicy_);
-  SetSslCert(defaults.sslcert_);
-}
-
 void Session::SetSslCert(const SslCert &sslcert) {
 #if defined(_WIN32) || defined(__WIN32__) || defined(_MSC_VER)
 #if LIBCURL_VERSION_MAJOR >= 7
@@ -156,10 +137,6 @@ void Session::SetSslCert(const SslCert &sslcert) {
 
 void Session::SetUrl(const Url &url) {
   url_ = url;
-}
-
-void Session::AppendUrl(const Url &url) {
-  url_ = url_ + url;
 }
 
 void Session::SetParameters(const Parameters &parameters) {
@@ -306,6 +283,19 @@ Response Session::makeRequest(CURL *curl) {
                   raw_url,
                   elapsed,
                   Error(curl_error, curl_->error)};
+}
+
+std::string Session::GetHttpLastProtocolVersion() {
+#if LIBCURL_VERSION_MAJOR >= 7
+#if LIBCURL_VERSION_MINOR >= 33
+#if LIBCURL_VERSION_PATCH >= 0
+  if (curl_version_info(CURLVERSION_NOW)->features & CURL_VERSION_HTTP2) {
+    return "HTTP/2.0";
+  }
+  return "HTTP/1.1";
+#endif
+#endif
+#endif
 }
 
 void Session::SetOption(const Url &url) {
