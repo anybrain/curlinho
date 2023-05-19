@@ -89,19 +89,35 @@ elseif(APPLE)
             CACHE INTERNAL "curlinho lib dirs" FORCE)
 
     else()
-        target_link_libraries(${CURLINHO_LIBRARIES}
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcurl.a
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
-                ${CURL_LIBRARIES})
+        if(CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
+            target_link_libraries(${CURLINHO_LIBRARIES}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/arm64/libcrypto.a
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/arm64/libssl.a
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/arm64/libcurl.a
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/arm64/libnghttp2.a
+                    ${CURL_LIBRARIES})
 
-        set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcurl.a
-                ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
-                CACHE INTERNAL "curlinho lib dirs" FORCE)
+            set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/arm64/libcrypto.a
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/arm64/libssl.a
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/arm64/libcurl.a
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/arm64/libnghttp2.a
+                    CACHE INTERNAL "curlinho lib dirs" FORCE)
+        else()
+            target_link_libraries(${CURLINHO_LIBRARIES}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcurl.a
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
+                    ${CURL_LIBRARIES})
+
+            set(CURLINHO_LIBRARY_DIRS ${CURLINHO_LIBRARY_DIRS}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcrypto.a
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libssl.a
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libcurl.a
+                    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libs/OSX/libnghttp2.a
+                    CACHE INTERNAL "curlinho lib dirs" FORCE)
+        endif()
     endif()
 elseif(MSVC)
     if(BUILD_STATIC_LIB)
